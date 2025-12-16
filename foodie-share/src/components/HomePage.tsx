@@ -1,15 +1,22 @@
-// eslint-disable-next-line no-unused-vars
-import React, { useEffect, useState } from 'react';
+import { useState, useEffect } from 'preact/hooks';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import { FaHeart } from 'react-icons/fa';
+import { FaHeart, FaHandPointer } from 'react-icons/fa';
 import '../assets/css/recipes-cards.css';
-import { FaHandPointer } from "react-icons/fa";
-import RecipeForm from './RecipeForm'
+import RecipeForm from './RecipeForm';
 
 const HomePage = () => {
-  const [recipes, setRecipes] = useState([]);
-  const [error, setError] = useState(null);
+
+  type Recipe = {
+    _id: string;
+    title: string;
+    imagePath?: string;
+    likes: number;
+    tag?: string;
+  };
+
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const fetchRecipes = async () => {

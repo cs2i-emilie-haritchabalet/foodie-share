@@ -14,7 +14,7 @@ type Recipe = {
   steps: string[];
   likes: number;
   imagePath?: string;
-  comments: Comment[];
+  comments?: Comment[];
 };
 
 const RecipeDetail = () => {
@@ -24,14 +24,14 @@ const RecipeDetail = () => {
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
-  useEffect(() => {
-    const r = recipesData.find(r => r.id === parseInt(id!));
-    if (r) setRecipe(r);
-    if (location.state?.successMessage) {
-      setShowSuccessMessage(true);
-      setTimeout(() => setShowSuccessMessage(false), 3000);
-    }
-  }, [id, location.state]);
+useEffect(() => {
+  const r = recipesData.find(r => r.id === parseInt(id!));
+  if (r) setRecipe({ ...r, comments: r.comments ?? [] }); 
+  if (location.state?.successMessage) {
+    setShowSuccessMessage(true);
+    setTimeout(() => setShowSuccessMessage(false), 3000);
+  }
+}, [id, location.state]);
 
   if (!recipe) return <p>Recette non trouvée</p>;
 
@@ -72,8 +72,8 @@ const RecipeDetail = () => {
           <textarea placeholder="Votre commentaire" required />
           <button type="submit">Commenter</button>
         </form>
-        <h3>{recipe.comments.length} Avis:</h3>
-        <ul>{recipe.comments.map((c, idx) => <li key={idx}>{c.user}: {c.message}</li>)}</ul>
+        <h3>{recipe.comments?.length} Avis:</h3>
+        <ul>{recipe.comments?.map((c, idx) => <li key={idx}>{c.user}: {c.message}</li>)}</ul>
       </div>
     </div>
   );

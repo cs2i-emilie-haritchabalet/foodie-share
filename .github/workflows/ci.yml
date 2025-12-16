@@ -6,6 +6,10 @@ on:
       - main
       - kevin
       - emilie
+
+  pull_request:
+   branches:
+    - main
   workflow_dispatch:
 
 permissions:
@@ -13,9 +17,16 @@ permissions:
   pages: write
   id-token: write
 
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: foodie-share
 
     steps:
       - uses: actions/checkout@v4
@@ -24,25 +35,26 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install dependencies
+      - name: Install
         run: npm install
 
-      - name: Build project
+      - name: Build
         run: npm run build
 
-      - name: Configure GitHub Pages
+      - name: Configure Pages
         uses: actions/configure-pages@v5
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist 
+          path: foodie-share/dist
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4

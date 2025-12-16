@@ -5,7 +5,7 @@ const RecipeDelete = () => {
     const navigate = useNavigate();
 
     const handleDelete = () => {
-        fetch(`http://localhost:5000/foodie-share/${id}/delete`, {
+        fetch(`http://localhost:3001/foodie-share/recipes/${id}/delete`, {
             method: 'DELETE',
         })
         .then(response => {

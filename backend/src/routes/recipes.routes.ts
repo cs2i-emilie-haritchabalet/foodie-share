@@ -3,28 +3,26 @@ import recipes from "../data/recipes.json";
 
 const router = Router();
 
-// Récupérer toutes les recettes
+// Toutes les recettes
 router.get("/all", (_req: Request, res: Response) => {
   res.json(recipes);
 });
 
-// Récupérer la recette par ID
-router.get("/:id", (req: Request, res: Response) => {
-  const { id } = req.params;
-  const recipe = recipes.find((r: any, index: number) => index.toString() === id);
+// Recettes les mieux notées
+router.get("/best-rated", (_req: Request, res: Response) => {
+  const sorted = [...recipes]
+    .sort((a, b) => b.likes - a.likes)
+    .slice(0, 3); // 👈 limite à 3 recettes
 
-  if (!recipe) {
-    return res.status(404).json({ message: "Recipe not found" });
-  }
-
-  res.json(recipe);
+  res.json(sorted);
 });
 
-// Récupérer la recette par titre
+// Recette par titre
 router.get("/title/:title", (req: Request, res: Response) => {
   const { title } = req.params;
+
   const recipe = recipes.find(
-    (r: any) => r.title.toLowerCase() === title.toLowerCase()
+    r => r.title.toLowerCase() === title.toLowerCase()
   );
 
   if (!recipe) {
@@ -34,33 +32,34 @@ router.get("/title/:title", (req: Request, res: Response) => {
   res.json(recipe);
 });
 
-// Récupérer les recettes les mieux notées
-router.get("/best-rated", (_req, res) => {
-  const sorted = [...recipes].sort((a, b) => b.likes - a.likes);
-  res.json(sorted);
+// Recette par ID (TOUJOURS EN DERNIER)
+router.get("/:id", (req: Request, res: Response) => {
+  const { id } = req.params;
+  const recipe = recipes[Number(id)];
+
+  if (!recipe) {
+    return res.status(404).json({ message: "Recipe not found" });
+  }
+
+  res.json(recipe);
 });
 
-
-// Exemple d'ajout de like
+// Like
 router.post("/:id/like", (req: Request, res: Response) => {
-  const { id } = req.params;
-  const recipe = recipes[parseInt(id)];
+  const recipe = recipes[Number(req.params.id)];
   if (!recipe) return res.status(404).json({ message: "Recipe not found" });
 
   recipe.likes += 1;
   res.json({ likes: recipe.likes });
 });
 
-// Exemple d'ajout de commentaire
+// Commentaire
 router.post("/:id/comment", (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { user, message } = req.body;
-
-  const recipe = recipes[parseInt(id)];
+  const recipe = recipes[Number(req.params.id)];
   if (!recipe) return res.status(404).json({ message: "Recipe not found" });
 
-  if (!recipe.comments) recipe.comments = [];
-  recipe.comments.push({ user, message });
+  recipe.comments ??= [];
+  recipe.comments.push(req.body);
 
   res.json({ comments: recipe.comments });
 });

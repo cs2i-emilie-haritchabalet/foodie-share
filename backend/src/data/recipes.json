@@ -1,5 +1,6 @@
 [
   {
+    "id":1,
     "title": "Spaghetti Bolognese",
     "description": "Un plat classique italien avec une sauce bolognese savoureuse.",
     "tag": "Plat",
@@ -13,6 +14,7 @@
     ]
   },
   {
+    "id":2,
     "title": "Salade César",
     "description": "Salade avec du poulet grillé, des croûtons et une sauce crémeuse.",
     "tag": "Entrée",
@@ -25,6 +27,7 @@
     ]
   },
   {
+    "id":3,
     "title": "Tarte aux pommes",
     "description": "Un dessert sucré et parfumé aux pommes caramélisées.",
     "tag": "Dessert",
@@ -38,6 +41,7 @@
     ]
   },
   {
+    "id":4,
     "title": "Poulet Tikka Masala",
     "description": "Poulet épicé mariné et cuit dans une sauce crémeuse et parfumée.",
     "tag": "Plat",
@@ -50,6 +54,7 @@
     ]
   },
   {
+    "id":5,
     "title": "Brownies au chocolat",
     "description": "Des brownies fondants et riches en chocolat.",
     "tag": "Dessert",
@@ -61,5 +66,109 @@
       { "user": "Ginette", "message": "Un succès à chaque fois !" },
       { "user": "Hugo", "message": "Incroyablement fondants." }
     ]
+  },
+  {
+    "id": 6,
+    "title": "Velouté de potiron",
+    "description": "Soupe onctueuse parfaite pour l’hiver.",
+    "tag": "Entrée",
+    "ingredients": ["potiron", "oignon", "crème", "bouillon"],
+    "steps": ["Couper", "Cuire", "Mixer"],
+    "likes": 45,
+    "imagePath": "/images/recipes/veloute_potiron.jpg"
+  },
+  {
+    "id": 7,
+    "title": "Quiche lorraine",
+    "description": "Quiche traditionnelle aux lardons.",
+    "tag": "Plat",
+    "ingredients": ["pâte brisée", "lardons", "oeufs", "crème"],
+    "steps": ["Préparer l'appareil", "Verser", "Cuire"],
+    "likes": 90,
+    "imagePath": "/images/recipes/quiche_lorraine.jpg"
+  },
+  {
+    "id": 8,
+    "title": "Carpaccio de tomates",
+    "description": "Entrée fraîche et légère.",
+    "tag": "Entrée",
+    "ingredients": ["tomates", "huile d'olive", "basilic"],
+    "steps": ["Couper", "Assaisonner"],
+    "likes": 0,
+    "imagePath": "/images/recipes/carpaccio_tomates.jpg"
+  },
+  {
+    "id": 9,
+    "title": "Riz cantonais",
+    "description": "Riz sauté aux légumes et œufs.",
+    "tag": "Plat",
+    "ingredients": ["riz", "oeufs", "petits pois", "jambon"],
+    "steps": ["Cuire le riz", "Sauter", "Mélanger"],
+    "likes": 60,
+    "imagePath": "/images/recipes/riz_cantonais.jpg"
+  },
+  {
+    "id": 10,
+    "title": "Mousse au chocolat",
+    "description": "Dessert aérien et gourmand.",
+    "tag": "Dessert",
+    "ingredients": ["chocolat", "oeufs", "sucre"],
+    "steps": ["Fondre le chocolat", "Monter les blancs", "Assembler"],
+    "likes": 180,
+    "imagePath": "/images/recipes/mousse_chocolat.jpg",
+    "comments": [
+      { "user": "Laura", "message": "Ultra légère !" }
+    ]
+  },
+  {
+    "id": 11,
+    "title": "Bruschetta tomate mozzarella",
+    "description": "Tartines italiennes fraîches.",
+    "tag": "Entrée",
+    "ingredients": ["pain", "tomates", "mozzarella", "basilic"],
+    "steps": ["Griller le pain", "Garnir"],
+    "likes": 30,
+    "imagePath": "/images/recipes/bruschetta.jpg"
+  },
+  {
+    "id": 12,
+    "title": "Lasagnes maison",
+    "description": "Plat familial par excellence.",
+    "tag": "Plat",
+    "ingredients": ["pâtes", "viande", "tomates", "béchamel"],
+    "steps": ["Monter", "Cuire"],
+    "likes": 220,
+    "imagePath": "/images/recipes/lasagnes.jpg"
+  },
+  {
+    "id": 13,
+    "title": "Panna cotta vanille",
+    "description": "Dessert italien délicat.",
+    "tag": "Dessert",
+    "ingredients": ["crème", "vanille", "sucre"],
+    "steps": ["Chauffer", "Refroidir"],
+    "likes": 70,
+    "imagePath": "/images/recipes/panna_cotta.jpg"
+  },
+  {
+    "id": 14,
+    "title": "Omelette aux champignons",
+    "description": "Simple et rapide.",
+    "tag": "Plat",
+    "ingredients": ["oeufs", "champignons", "beurre"],
+    "steps": ["Battre les oeufs", "Cuire"],
+    "likes": 10,
+    "imagePath": "/images/recipes/omelette_champignons.jpg"
+  },
+  {
+    "id": 15,
+    "title": "Salade de fruits",
+    "description": "Dessert frais et vitaminé.",
+    "tag": "Dessert",
+    "ingredients": ["fruits de saison"],
+    "steps": ["Couper", "Mélanger"],
+    "likes": 0,
+    "imagePath": "/images/recipes/salade_fruits.jpg"
   }
+
 ]

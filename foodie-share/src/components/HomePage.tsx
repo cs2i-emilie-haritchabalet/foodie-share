@@ -8,7 +8,7 @@ import RecipeForm from './RecipeForm';
 const HomePage = () => {
 
   type Recipe = {
-    _id: string;
+    id: number;
     title: string;
     imagePath?: string;
     likes: number;
@@ -45,7 +45,7 @@ const HomePage = () => {
       {error && <p className="error">{error}</p>}
       <div className='card-container'>
         {recipes.map((recipe) => (
-          <div key={recipe._id} className="card" onClick={() => navigate(`/foodie-share/recipes/${recipe._id}`)}>
+          <div key={recipe.id} className="card" onClick={() => navigate(`/foodie-share/recipes/${recipe.id}`)}>
 
             <img
 

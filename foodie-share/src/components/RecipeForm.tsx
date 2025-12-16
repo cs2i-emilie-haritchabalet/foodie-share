@@ -64,7 +64,7 @@ function RecipeForm({ onRecipeAdded }: RecipeFormProps) {
       formData.append('image', image);
     }
 
-    fetch('http://localhost:3001/foodie-share/add', {
+    fetch('http://localhost:3001/foodie-share/recipes/add', {
       method: 'POST',
       body: formData,
     })

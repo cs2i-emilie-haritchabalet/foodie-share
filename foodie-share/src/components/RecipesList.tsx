@@ -14,7 +14,7 @@ const RecipesList = () => {
     };
 
     type Recipe = {
-        _id?: string;            
+        id: number;            
         title: string;
         description: string;
         tag: string;
@@ -107,7 +107,7 @@ const [recipes, setRecipes] = useState<Recipe[]>([]);
             {error && <p className="error">{error}</p>}
             <div className='card-container'>
                 {filteredRecipes.map((recipe) => (
-                    <div key={recipe._id} className="card" onClick={() => navigate(`/foodie-share/${recipe._id}`)}>
+                    <div key={recipe.id} className="card" onClick={() => navigate(`/foodie-share/${recipe.id}`)}>
                         <img
                             src={recipe.imagePath ? `http://localhost:3001${recipe.imagePath}` : `http://localhost:3001/images/recipes/livre_recette.png`}
                             alt={recipe.title}

@@ -1,32 +1,42 @@
 import { useParams, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'preact/hooks';
+
+type Recipe = {
+  id: number;
+  title: string;
+  description: string;
+  tag?: string;
+  ingredients?: string[];
+  steps?: string[];
+  likes?: number;
+  imagePath?: string;
+};
 
 const RecipeDelete = () => {
-    const { id } = useParams(); // Récupère l'ID de la recette à supprimer
+    const { id } = useParams();
     const navigate = useNavigate();
+    const [recipe, setRecipe] = useState<Recipe | null>(null);
+
+    useEffect(() => {
+        fetch('/foodie-share/data/recipes.json')
+        .then(res => res.json())
+        .then((data: Recipe[]) => {
+            const found = data.find(r => r.id === Number(id));
+            setRecipe(found ?? null);
+        })
+        .catch(err => console.error(err));
+    }, [id]);
 
     const handleDelete = () => {
-        fetch(`http://localhost:3001/foodie-share/recipes/${id}/delete`, {
-            method: 'DELETE',
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Erreur lors de la suppression');
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Recette supprimée avec succès', data);
-            // Redirige vers la liste des recettes avec un message de succès si nécessaire
-            navigate('/foodie-share/all', { state: { successMessage: 'Recette supprimée avec succès !' } });
-        })
-        .catch(error => {
-            console.error('Erreur:', error);
-        });
+        alert("Suppression non disponible en version statique.");
     };
+
+    if (!recipe) return <p>Recette introuvable</p>;
 
     return (
         <div>
             <h2>Êtes-vous sûr de vouloir supprimer cette recette ?</h2>
+            <p>{recipe.title}</p>
             <button onClick={handleDelete}>Confirmer la suppression</button>
         </div>
     );

@@ -11,12 +11,15 @@ const App = () => {
   return (
     <Router>
       <Routes>
+        {/* Page d'accueil */}
         <Route path="/" element={<HomePage />} />
-        <Route path="/foodie-share/:id" element={<RecipeDetail />} />
-        <Route path="/foodie-share/all" element={<RecipesList />} />
-        <Route path="/foodie-share/:id/delete" element={<RecipeDelete />} /> 
-        <Route path="/foodie-share/:id/update" element={<RecipeEdit />} />
-
+        {/* Détail d'une recette */}
+        <Route path="/recipes/:id" element={<RecipeDetail />} />
+        {/* Liste de toutes les recettes */}
+        <Route path="/all" element={<RecipesList />} />
+        {/* Suppression / modification */}
+        <Route path="/recipes/:id/delete" element={<RecipeDelete />} /> 
+        <Route path="/recipes/:id/update" element={<RecipeEdit />} />
       </Routes>
     </Router>
   );

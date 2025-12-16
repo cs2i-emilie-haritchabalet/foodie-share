@@ -1,9 +1,7 @@
-// eslint-disable-next-line no-unused-vars
 import { useState, useEffect } from 'preact/hooks';
-import { useParams, Link, useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { useParams, useNavigate } from 'react-router-dom';
 import '../assets/css/recipe-details.css';
-import { FaHeart, FaAngleDoubleLeft, FaTrashAlt, FaPenNib, FaRegComment } from 'react-icons/fa';
+import { FaHeart, FaAngleDoubleLeft, FaRegComment } from 'react-icons/fa';
 
 type Comment = {
     user: string;
@@ -25,44 +23,28 @@ type Recipe = {
 const RecipeDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const location = useLocation();
 
     const [recipe, setRecipe] = useState<Recipe | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-    const [comment, setComment] = useState('');
-    const [username, setUsername] = useState('');
     const [activeIndex, setActiveIndex] = useState(0);
     const intervalDuration = 3000;
 
-    // Fetch recipe
+    // Récupération depuis le JSON statique
     useEffect(() => {
-        const fetchRecipe = async () => {
-            try {
-                const response = await axios.get<Recipe>(`http://localhost:3001/foodie-share/recipes/${id}`);
-                setRecipe(response.data);
-            } catch (err) {
-                setError('Erreur lors de la récupération de la recette.');
-                console.error(err);
-            }
-        };
-        fetchRecipe();
+        fetch('/foodie-share/data/recipes.json')
+            .then(res => res.json())
+            .then((data: Recipe[]) => {
+                const found = data.find(r => r.id === Number(id));
+                setRecipe(found ?? null);
+            })
+            .catch(err => setError('Erreur lors de la récupération de la recette.'));
     }, [id]);
-
-    // Success message timer
-    useEffect(() => {
-        if (location.state?.successMessage) {
-            setShowSuccessMessage(true);
-            const timer = setTimeout(() => setShowSuccessMessage(false), 3000);
-            return () => clearTimeout(timer);
-        }
-    }, [location.state]);
 
     // Carousel des commentaires
     useEffect(() => {
         if (recipe?.comments && recipe.comments.length > 0) {
             const interval = setInterval(() => {
-                setActiveIndex((prevIndex) => (prevIndex + 1) % recipe.comments!.length);
+                setActiveIndex(prev => (prev + 1) % recipe.comments!.length);
             }, intervalDuration);
             return () => clearInterval(interval);
         }
@@ -73,41 +55,18 @@ const RecipeDetail = () => {
 
     const goBack = () => navigate(-1);
 
-    const handleLike = async () => {
-        try {
-            const response = await axios.post<{ likes: number }>(`http://localhost:3001/foodie-share/recipes/${id}/like`);
-            setRecipe({ ...recipe, likes: response.data.likes });
-        } catch (err: any) {
-            if (err.response?.status === 403) {
-                alert("Vous avez déjà aimé cette recette.");
-            } else {
-                console.error(err);
-            }
-        }
-    };
-
-    const handleCommentSubmit = async (e: Event) => {
-        e.preventDefault();
-        if (!recipe) return;
-        try {
-            const response = await axios.post<{ comments: Comment[] }>(
-                `http://localhost:3001/foodie-share/recipes/${id}/comment`,
-                { user: username, message: comment }
-            );
-            setRecipe({ ...recipe, comments: response.data.comments });
-            setComment('');
-            setUsername('');
-        } catch (err) {
-            console.error(err);
-        }
-    };
+    // Fonctions lecture seule
+    const handleLike = () => alert("Impossible d'aimer une recette en version statique.");
+    const handleCommentSubmit = (e: Event) => { 
+        e.preventDefault(); 
+        alert("Impossible de commenter en version statique."); 
+    }
 
     return (
         <div id="divDetails">
             <button id="goBack" onClick={goBack}><FaAngleDoubleLeft /> Retour</button>
 
             <div id="titleDetails">
-                {showSuccessMessage && <p className="success">{location.state.successMessage}</p>}
                 <h1>{recipe.title}</h1>
                 <div className='likes'>
                     <span>{recipe.likes} <FaHeart style={{ color: 'red' }} /></span>
@@ -116,15 +75,9 @@ const RecipeDetail = () => {
             </div>
 
             <img
-                id="imgDetails"
-                src={recipe.imagePath ? `http://localhost:3001${recipe.imagePath}` : `http://localhost:3001/images/recipes/livre_recette.png`}
-                alt={recipe.title}
+              src={recipe.imagePath ? `/foodie-share${recipe.imagePath}` : '/foodie-share/images/recipes/livre_recette.png'}
+              alt={recipe.title}
             />
-
-            <div className="actions">
-                <Link to={`/foodie-share/recipes/${recipe.id}/delete`}><FaTrashAlt /> Supprimer la recette</Link>
-                <Link to={`/foodie-share/recipes/${recipe.id}/update`}><FaPenNib /> Modifier la recette</Link>
-            </div>
 
             <div className="bodyDetails">
                 <h3>Catégorie: {recipe.tag}</h3>
@@ -139,38 +92,35 @@ const RecipeDetail = () => {
                 </div>
 
                 <div className="comments-section">
-                    <h3>Ajouter un commentaire</h3>
+                    <h3>Commentaires ({recipe.comments?.length ?? 0})</h3>
                     <form onSubmit={handleCommentSubmit}>
                         <input
                             type="text"
-                            value={username}
-                            onChange={(e) => setUsername((e.currentTarget as HTMLInputElement).value)}
                             placeholder="Votre nom"
-                            required
+                            disabled
                         />
                         <textarea
-                            value={comment}
-                            onChange={(e) => setComment((e.currentTarget as HTMLTextAreaElement).value)}
                             placeholder="Votre commentaire"
-                            required
+                            disabled
                         />
-                        <button type="submit">Commenter</button>
+                        <button type="submit" disabled>Commenter</button>
                     </form>
 
-                    <h3>{recipe.comments?.length ?? 0} Avis:</h3>
-                    <div className='wrapper'>
-                        <div className='carousel'>
-                            {recipe.comments?.map((c, i) => (
-                                <div className={`carousel__item ${i === activeIndex ? 'active' : ''}`} key={i}>
-                                    <div className='carousel__item-head'><FaRegComment /></div>
-                                    <div className='carousel__item-body'>
-                                        <p className='title'>{c.user}</p>
-                                        <p>{c.message}</p>
+                    {recipe.comments && recipe.comments.length > 0 ? (
+                        <div className='wrapper'>
+                            <div className='carousel'>
+                                {recipe.comments.map((c, i) => (
+                                    <div className={`carousel__item ${i === activeIndex ? 'active' : ''}`} key={i}>
+                                        <div className='carousel__item-head'><FaRegComment /></div>
+                                        <div className='carousel__item-body'>
+                                            <p className='title'>{c.user}</p>
+                                            <p>{c.message}</p>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </div>
-                    </div>
+                    ) : <p>Aucun commentaire.</p>}
                 </div>
             </div>
         </div>

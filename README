@@ -1,0 +1,7 @@
+### backend
+
+lancer le back 
+```js
+npm run dev
+```
+tourne sur le port 3001

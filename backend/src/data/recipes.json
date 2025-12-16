@@ -1,0 +1,48 @@
+[
+  {
+    "title": "Spaghetti Bolognese",
+    "description": "Un plat classique italien avec une sauce bolognese savoureuse.",
+    "tag": "Plat",
+    "ingredients": [
+      "spaghetti",
+      "boeuf haché",
+      "tomates",
+      "oignons",
+      "ail",
+      "basilic"
+    ],
+    "steps": [
+      "Faire cuire les pâtes",
+      "Préparer la sauce",
+      "Mélanger et servir"
+    ],
+    "likes": 150,
+    "imagePath": "/images/recipes/spaghetti_bolognese.jpg",
+    "comments": [
+      { "user": "Alice", "message": "Délicieux !" },
+      { "user": "Bob", "message": "Ma famille a adoré." }
+    ]
+  },
+  {
+    "title": "Salade César",
+    "description": "Salade avec du poulet grillé, des croûtons et une sauce crémeuse.",
+    "tag": "Entrée",
+    "ingredients": [
+      "laitue romaine",
+      "poulet grillé",
+      "croûtons",
+      "parmesan",
+      "sauce César"
+    ],
+    "steps": [
+      "Préparer les ingrédients",
+      "Assembler la salade",
+      "Ajouter la sauce"
+    ],
+    "likes": 80,
+    "imagePath": "/images/recipes/salade_cesar.jpg",
+    "comments": [
+      { "user": "Charlie", "message": "Simple et délicieux." }
+    ]
+  }
+]

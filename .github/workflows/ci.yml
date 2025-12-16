@@ -2,7 +2,6 @@ name: Deploy Frontend to GitHub Pages
 
 on:
   push:
-
     branches:
       - main
       - kevin
@@ -23,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: foodie-share-frontend
+        working-directory: foodie-share
 
     steps:
       - uses: actions/checkout@v4
@@ -33,7 +32,7 @@ jobs:
           node-version: 20
 
       - name: Install
-        run: npm ci
+        run: npm install
 
       - name: Build
         run: npm run build
@@ -44,7 +43,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: foodie-share-frontend/dist
+          path: foodie-share/dist
 
   deploy:
     needs: build

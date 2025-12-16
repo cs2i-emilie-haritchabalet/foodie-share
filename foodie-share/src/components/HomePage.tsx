@@ -21,7 +21,7 @@ const HomePage = () => {
 
   const fetchRecipes = async () => {
     try {
-      const response = await axios.get(`http://localhost:3001/foodie-share/best-rated`);
+      const response = await axios.get(`http://localhost:3001/foodie-share/recipes/best-rated`);
       setRecipes(response.data);
     } catch (error) {
       setError('Erreur lors de la récupération des recettes.');
@@ -45,7 +45,7 @@ const HomePage = () => {
       {error && <p className="error">{error}</p>}
       <div className='card-container'>
         {recipes.map((recipe) => (
-          <div key={recipe._id} className="card" onClick={() => navigate(`/foodie-share/${recipe._id}`)}>
+          <div key={recipe._id} className="card" onClick={() => navigate(`/foodie-share/recipes/${recipe._id}`)}>
 
             <img
 

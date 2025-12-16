@@ -4,7 +4,7 @@ import recipes from "../data/recipes.json";
 const router = Router();
 
 // Récupérer toutes les recettes
-router.get("/", (_req: Request, res: Response) => {
+router.get("/all", (_req: Request, res: Response) => {
   res.json(recipes);
 });
 
@@ -33,6 +33,13 @@ router.get("/title/:title", (req: Request, res: Response) => {
 
   res.json(recipe);
 });
+
+// Récupérer les recettes les mieux notées
+router.get("/best-rated", (_req, res) => {
+  const sorted = [...recipes].sort((a, b) => b.likes - a.likes);
+  res.json(sorted);
+});
+
 
 // Exemple d'ajout de like
 router.post("/:id/like", (req: Request, res: Response) => {

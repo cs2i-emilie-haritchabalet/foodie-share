@@ -38,7 +38,7 @@ const [recipes, setRecipes] = useState<Recipe[]>([]);
 
     const fetchRecipes = async () => {
         try {
-            const response = await axios.get(`http://localhost:3001/foodie-share/all`);
+            const response = await axios.get(`http://localhost:3001/foodie-share/recipes/all`);
             setRecipes(response.data);
         } catch (error) {
             setError('Erreur lors de la récupération des recettes.');

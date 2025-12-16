@@ -3,19 +3,8 @@
     "title": "Spaghetti Bolognese",
     "description": "Un plat classique italien avec une sauce bolognese savoureuse.",
     "tag": "Plat",
-    "ingredients": [
-      "spaghetti",
-      "boeuf haché",
-      "tomates",
-      "oignons",
-      "ail",
-      "basilic"
-    ],
-    "steps": [
-      "Faire cuire les pâtes",
-      "Préparer la sauce",
-      "Mélanger et servir"
-    ],
+    "ingredients": ["spaghetti", "boeuf haché", "tomates", "oignons", "ail", "basilic"],
+    "steps": ["Faire cuire les pâtes", "Préparer la sauce", "Mélanger et servir"],
     "likes": 150,
     "imagePath": "/images/recipes/spaghetti_bolognese.jpg",
     "comments": [
@@ -27,22 +16,50 @@
     "title": "Salade César",
     "description": "Salade avec du poulet grillé, des croûtons et une sauce crémeuse.",
     "tag": "Entrée",
-    "ingredients": [
-      "laitue romaine",
-      "poulet grillé",
-      "croûtons",
-      "parmesan",
-      "sauce César"
-    ],
-    "steps": [
-      "Préparer les ingrédients",
-      "Assembler la salade",
-      "Ajouter la sauce"
-    ],
+    "ingredients": ["laitue romaine", "poulet grillé", "croûtons", "parmesan", "sauce César"],
+    "steps": ["Préparer les ingrédients", "Assembler la salade", "Ajouter la sauce"],
     "likes": 80,
     "imagePath": "/images/recipes/salade_cesar.jpg",
     "comments": [
       { "user": "Charlie", "message": "Simple et délicieux." }
+    ]
+  },
+  {
+    "title": "Tarte aux pommes",
+    "description": "Un dessert sucré et parfumé aux pommes caramélisées.",
+    "tag": "Dessert",
+    "ingredients": ["pommes", "sucre", "beurre", "pâte feuilletée"],
+    "steps": ["Préchauffer le four", "Préparer les pommes", "Cuire la tarte"],
+    "likes": 120,
+    "imagePath": "/images/recipes/tarte_aux_pommes.jpg",
+    "comments": [
+      { "user": "Danielle", "message": "Super recette, mes enfants ont adoré !" },
+      { "user": "Elise", "message": "Parfait pour l’automne." }
+    ]
+  },
+  {
+    "title": "Poulet Tikka Masala",
+    "description": "Poulet épicé mariné et cuit dans une sauce crémeuse et parfumée.",
+    "tag": "Plat",
+    "ingredients": ["poulet", "yaourt", "tomates", "épices", "crème"],
+    "steps": ["Mariner le poulet", "Préparer la sauce", "Cuire le poulet dans la sauce"],
+    "likes": 200,
+    "imagePath": "/images/recipes/poulet_tikka_masala.jpg",
+    "comments": [
+      { "user": "Fabien", "message": "Un délice, très authentique." }
+    ]
+  },
+  {
+    "title": "Brownies au chocolat",
+    "description": "Des brownies fondants et riches en chocolat.",
+    "tag": "Dessert",
+    "ingredients": ["chocolat", "beurre", "sucre", "oeufs", "farine"],
+    "steps": ["Faire fondre le chocolat", "Mélanger les ingrédients", "Cuire au four"],
+    "likes": 250,
+    "imagePath": "/images/recipes/brownies_au_chocolat.jpg",
+    "comments": [
+      { "user": "Ginette", "message": "Un succès à chaque fois !" },
+      { "user": "Hugo", "message": "Incroyablement fondants." }
     ]
   }
 ]

@@ -1,143 +1,184 @@
 // eslint-disable-next-line no-unused-vars
 import { useState, useEffect } from 'preact/hooks';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, Link, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import '../assets/css/recipe-form.css';
+import '../assets/css/recipe-details.css';
+import { FaHeart, FaAngleDoubleLeft, FaTrashAlt, FaPenNib, FaRegComment } from 'react-icons/fa';
 
-const RecipeEdit = () => {
-    const { id } = useParams();  // Récupère l'ID de la recette depuis l'URL
-    const navigate = useNavigate();
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
-    const [ingredients, setIngredients] = useState([]);
-    const [steps, setSteps] = useState([]);
-    const [ingredientInput, setIngredientInput] = useState('');
-    const [stepInput, setStepInput] = useState('');
-    const [tag, setTag] = useState('');
-
-    useEffect(() => {
-        //pré-remplir form
-        const fetchRecipe = async () => {
-            try {
-                const response = await axios.get(`http://localhost:5000/foodie-share/${id}`);
-                const { title, description, ingredients, steps, tag } = response.data;
-                setTitle(title);
-                setDescription(description);
-                setIngredients(ingredients);
-                setSteps(steps);
-                setTag(tag);
-            } catch (error) {
-                console.error('Erreur lors de la récupération de la recette:', error);
-            }
-        };
-        fetchRecipe();
-    }, [id]);
-
-    const handleAddIngredient = () => {
-        if (ingredientInput.trim()) {
-            setIngredients([...ingredients, ingredientInput.trim()]);
-            setIngredientInput('');
-        }
-    };
-
-    const handleRemoveIngredient = (index) => {
-        setIngredients(ingredients.filter((_, i) => i !== index));
-    };
-
-    const handleAddStep = () => {
-        if (stepInput.trim()) {
-            setSteps([...steps, stepInput.trim()]);
-            setStepInput('');
-        }
-    };
-
-    const handleRemoveStep = (index) => {
-        setSteps(steps.filter((_, i) => i !== index));
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const updatedRecipe = { title, description, ingredients, steps, tag };
-        
-        try {
-            await axios.put(`http://localhost:5000/foodie-share/${id}/update`, updatedRecipe);
-            navigate(`/foodie-share/${id}`, { state: { successMessage: 'Recette mise à jour avec succès !' } });
-        } catch (error) {
-            console.error('Erreur lors de la mise à jour de la recette:', error);
-        }
-    };
-
-    return (
-        <div className='formContainer'>
-            <form onSubmit={handleSubmit}>
-                <h2>Modifier la recette</h2>
-                <input
-                    type="text"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="Titre de la recette"
-                />
-                <textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Description de la recette"
-                />
-                <label>
-                    Catégorie de la recette :
-                    <select value={tag} onChange={(e) => setTag(e.target.value)}>
-                        <option value="entrée">Entrée</option>
-                        <option value="plat">Plat</option>
-                        <option value="dessert">Dessert</option>
-                    </select>
-                </label>
-                
-                <div id="addIngredient">
-                    <input
-                        type="text"
-                        value={ingredientInput}
-                        onChange={(e) => setIngredientInput(e.target.value)}
-                        placeholder="Ajouter un ingrédient"
-                    />
-                    <button type="button" onClick={handleAddIngredient}>
-                        Ajouter un ingrédient
-                    </button>
-                </div>
-                <ul>
-                    {ingredients.map((ingredient, index) => (
-                        <li key={index}>
-                            {ingredient}
-                            <button type="button" onClick={() => handleRemoveIngredient(index)}>
-                                Supprimer
-                            </button>
-                        </li>
-                    ))}
-                </ul>
-
-                <div id="addStep">
-                    <input
-                        type="text"
-                        value={stepInput}
-                        onChange={(e) => setStepInput(e.target.value)}
-                        placeholder="Ajouter une étape"
-                    />
-                    <button type="button" onClick={handleAddStep}>
-                        Ajouter une étape
-                    </button>
-                </div>
-                <ol>
-                    {steps.map((step, index) => (
-                        <li key={index}>
-                            {step}
-                            <button type="button" onClick={() => handleRemoveStep(index)}>
-                                Supprimer
-                            </button>
-                        </li>
-                    ))}
-                </ol>
-                <button type="submit">Mettre à jour la recette</button>
-            </form>
-        </div>
-    );
+// Types pour les recettes et commentaires
+type Comment = {
+  user: string;
+  message: string;
 };
 
-export default RecipeEdit;
+type Recipe = {
+  _id?: string;
+  title: string;
+  description: string;
+  tag: string;
+  ingredients: string[];
+  steps: string[];
+  likes: number;
+  imagePath?: string;
+  comments: Comment[];
+};
+
+const RecipeDetail = () => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [recipe, setRecipe] = useState<Recipe | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [username, setUsername] = useState('');
+  const [comment, setComment] = useState('');
+  const [activeIndex, setActiveIndex] = useState(0);
+  const intervalDuration = 3000;
+
+  // Récupération de la recette
+  useEffect(() => {
+    const fetchRecipe = async () => {
+      try {
+        const response = await axios.get<Recipe>(`http://localhost:5000/foodie-share/${id}`);
+        setRecipe(response.data);
+      } catch (err) {
+        setError('Erreur lors de la récupération de la recette.');
+        console.error(err);
+      }
+    };
+    fetchRecipe();
+  }, [id]);
+
+  // Affichage temporaire du message de succès
+  useEffect(() => {
+    if (location.state?.successMessage) {
+      setShowSuccessMessage(true);
+      const timer = setTimeout(() => setShowSuccessMessage(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [location.state]);
+
+  // Carousel pour les commentaires
+  useEffect(() => {
+    if (recipe?.comments.length) {
+      const interval = setInterval(() => {
+        setActiveIndex((prev) => (prev + 1) % recipe.comments.length);
+      }, intervalDuration);
+      return () => clearInterval(interval);
+    }
+  }, [recipe]);
+
+  if (error) return <p>{error}</p>;
+  if (!recipe) return <p>Chargement...</p>;
+
+  const goBack = () => navigate(-1);
+
+  const handleLike = async () => {
+    try {
+      const response = await axios.post<{ likes: number }>(`http://localhost:5000/foodie-share/${id}/like`);
+      setRecipe({ ...recipe, likes: response.data.likes });
+    } catch (err: any) {
+      if (err.response?.status === 403) alert("Vous avez déjà aimé cette recette.");
+      else console.error(err);
+    }
+  };
+
+  const handleCommentSubmit = async (e: Event) => {
+    e.preventDefault();
+    if (!recipe) return;
+
+    try {
+      const response = await axios.post<{ comments: Comment[] }>(
+        `http://localhost:5000/foodie-share/${id}/comment`,
+        { user: username, message: comment }
+      );
+      setRecipe({ ...recipe, comments: response.data.comments });
+      setUsername('');
+      setComment('');
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  return (
+    <div id="divDetails">
+      <button id="goBack" onClick={goBack}><FaAngleDoubleLeft /> Retour</button>
+
+      <div id="titleDetails">
+        {showSuccessMessage && <p className="success">{location.state.successMessage}</p>}
+        <h1>{recipe.title}</h1>
+        <div className="likes">
+          <span>{recipe.likes} <FaHeart style={{ color: 'red' }} /></span>
+          <button onClick={handleLike}>J'aime</button>
+        </div>
+      </div>
+
+      <img
+        id="imgDetails"
+        src={recipe.imagePath ? `http://localhost:5000${recipe.imagePath}` : `http://localhost:5000/images/recipes/livre_recette.png`}
+        alt={recipe.title}
+      />
+
+      <div className="actions">
+        <Link to={`/foodie-share/${recipe._id}/delete`}><FaTrashAlt /> Supprimer la recette</Link>
+        <Link to={`/foodie-share/${recipe._id}/update`}><FaPenNib /> Modifier la recette</Link>
+      </div>
+
+      <div className="bodyDetails">
+        <h3>Catégorie: {recipe.tag}</h3>
+        <p>{recipe.description}</p>
+
+        <div className="recipe">
+          <h2>Ingrédients</h2>
+          <ul>
+            {recipe.ingredients.map((ing, i) => <li key={i}>{ing}</li>)}
+          </ul>
+          <h2>Étapes</h2>
+          <ol>
+            {recipe.steps.map((step, i) => <li key={i}>{step}</li>)}
+          </ol>
+        </div>
+
+        <div className="comments-section">
+          <h3>Ajouter un commentaire</h3>
+          <form onSubmit={handleCommentSubmit}>
+            <input
+              type="text"
+              value={username}
+              onInput={(e: any) => setUsername(e.target.value)}
+              placeholder="Votre nom"
+              required
+            />
+            <textarea
+              value={comment}
+              onInput={(e: any) => setComment(e.target.value)}
+              placeholder="Votre commentaire"
+              required
+            />
+            <button type="submit">Commenter</button>
+          </form>
+
+          <h3>{recipe.comments.length} Avis:</h3>
+          <div className="wrapper">
+            <div className="carousel">
+              {recipe.comments.map((c, i) => (
+                <div
+                  className={`carousel__item ${i === activeIndex ? 'active' : ''}`}
+                  key={i}
+                >
+                  <div className="carousel__item-head"><FaRegComment /></div>
+                  <div className="carousel__item-body">
+                    <p className="title">{c.user}</p>
+                    <p>{c.message}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default RecipeDetail;

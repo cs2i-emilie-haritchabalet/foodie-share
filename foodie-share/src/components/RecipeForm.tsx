@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-unused-vars
-import React, { useState } from 'react';
+import { useState } from 'preact/hooks';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types'; // Importer PropTypes
 import '../assets/css/recipe-form.css';

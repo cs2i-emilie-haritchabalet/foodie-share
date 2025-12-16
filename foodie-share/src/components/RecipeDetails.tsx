@@ -1,15 +1,34 @@
 // eslint-disable-next-line no-unused-vars
-import React,{ useEffect, useState } from 'react';
+import { useState, useEffect } from 'preact/hooks';
 import { useParams, Link, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../assets/css/recipe-details.css';
 import { FaHeart, FaAngleDoubleLeft, FaTrashAlt, FaPenNib, FaRegComment } from 'react-icons/fa';
 
 const RecipeDetail = () => {
+
+    type Comment = {
+        user: string;
+        message: string;
+    };
+
+    type Recipe = {
+        _id?: string;       
+        title: string;
+        description: string;
+        tag: string;
+        ingredients: string[];
+        steps: string[];
+        likes: number;
+        imagePath?: string;
+        comments?: Comment[];
+    };
+
+
     const { id } = useParams();
     const navigate = useNavigate();
-    const [recipe, setRecipe] = useState(null);
-    const [error, setError] = useState(null);
+    const [recipe, setRecipe] = useState<Recipe | null>(null);
+    const [error, setError] = useState<string | null>(null);
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
     const location = useLocation();
     const [comment, setComment] = useState('');
@@ -18,19 +37,20 @@ const RecipeDetail = () => {
     const [activeIndex, setActiveIndex] = useState(0);
 
 
-    useEffect(() => {
+   useEffect(() => {
         const fetchRecipe = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/foodie-share/${id}`);
+                const response = await axios.get<Recipe>(`http://localhost:5000/foodie-share/${id}`);
                 setRecipe(response.data);
             } catch (error) {
                 setError('Erreur lors de la récupération de la recette.');
-                console.error('Erreur lors de la récupération de la recette:', error);
+                console.error('Erreur lors de l\'affichage de la recette:', error);
             }
         };
 
         fetchRecipe();
     }, [id]);
+
 
     useEffect(() => {
         // Vérifie si un message de succès est présent

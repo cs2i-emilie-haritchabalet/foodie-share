@@ -6,6 +6,10 @@ on:
       - main
       - kevin
       - emilie
+
+  pull_request:
+   branches:
+    - main
   workflow_dispatch:
 
 permissions:

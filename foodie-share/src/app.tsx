@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-unused-vars
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import {HashRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './components/HomePage.js';
 import RecipeDetail from './components/RecipeDetails.js';
 import RecipesList from './components/RecipesList.js';

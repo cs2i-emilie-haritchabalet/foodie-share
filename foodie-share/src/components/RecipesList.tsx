@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-unused-vars
-import React, { useEffect, useState } from 'react';
+import { useState, useEffect } from 'preact/hooks';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import '../assets/css/recipes-cards.css';
@@ -7,9 +7,29 @@ import { FaHeart, FaAngleDoubleLeft, FaHandPointer } from 'react-icons/fa';
 import RecipeForm from './RecipeForm';
 
 const RecipesList = () => {
+
+    type Comment = {
+        user: string;
+        message: string;
+    };
+
+    type Recipe = {
+        _id?: string;            
+        title: string;
+        description: string;
+        tag: string;
+        ingredients: string[];
+        steps: string[];
+        likes: number;
+        imagePath?: string;
+        comments?: Comment[];
+    };
+
+
     const { id } = useParams();
-    const [recipes, setRecipes] = useState(null);
-    const [error, setError] = useState(null);
+    
+const [recipes, setRecipes] = useState<Recipe[]>([]);
+    const [error, setError] = useState<string | null>(null);
     const [selectedTag, setSelectedTag] = useState('');
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
     const navigate = useNavigate();
@@ -68,12 +88,18 @@ const RecipesList = () => {
             <h1>Toutes nos recettes</h1>
 
             <label htmlFor="tagFilter">Filtrer par catégorie : </label>
-            <select id="tagFilter" value={selectedTag} onChange={(e) => setSelectedTag(e.target.value)}>
+
+            <select
+            id="tagFilter"
+            value={selectedTag}
+            onChange={(e) => setSelectedTag((e.currentTarget as HTMLSelectElement).value)}
+            >
                 <option value="">Tous</option>
                 {tags.map((tag) => (
                     <option key={tag} value={tag}>{tag}</option>
                 ))}
             </select>
+
 
             {showSuccessMessage && (
                 <p className="success">{location.state.successMessage}</p>

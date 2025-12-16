@@ -1,0 +1,162 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+}
+
+.card-container {
+  display: grid;
+  grid-template-columns: 1fr; 
+  gap: 16px;
+  max-width: 400px;
+  padding:10px; 
+}
+
+/* Styles pour les cartes */
+.card {
+  box-sizing: border-box;
+  position: relative;
+  border-radius: 2rem;
+  overflow: hidden;
+  color: #000;
+  font-weight: bolder;
+  transform: translateZ(0);
+}
+
+.card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(calc(1 + (var(--hover, 0) * 0.25))) rotate(calc(var(--hover, 0) * -5deg));
+  transition: transform 0.2s;
+}
+
+.card__footer {
+  padding: 0 1.5rem;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: hsl(0 0% 100% / 0.5);
+  backdrop-filter: blur(var(--blur));
+  height: 30%;
+  display: grid;
+  grid-template-rows: auto auto;
+  gap: 0.5ch;
+  align-content: center;
+}
+
+.card__action {
+  position: absolute;
+  aspect-ratio: 1;
+  width: calc(var(--size) * 0.15);
+  bottom: 30%;
+  right: 1.5rem;
+  transform: translateY(50%) translateY(calc((var(--size) * 0.4))) translateY(calc(var(--hover, 0) * (var(--size) * -0.4)));
+  background: hsl(0 0% 100% / 0.5);
+  display: grid;
+  place-items: center;
+  border-radius: 0.5rem;
+  transition: transform 0.2s;
+}
+
+.card__action svg {
+  aspect-ratio: 1;
+  width: 50%;
+}
+
+.card__footer span:nth-of-type(1) {
+  font-size: calc(var(--size) * 0.04); /* Taille de police par défaut pour mobile */
+}
+
+.card__footer span:nth-of-type(2) {
+  font-size: calc(var(--size) * 0.02); /* Taille de police par défaut pour mobile */
+}
+
+.card:is(:hover, :focus-visible) {
+  --hover: 1;
+}
+
+
+#recipes {
+  display: flex; 
+  justify-content: center; 
+  margin-top: 20px;
+  flex-direction: column; /* Affiche les recettes en colonne sur mobile */
+  align-items: center; /* Centre les éléments */
+}
+
+#recipes span {
+  text-decoration: underline;
+  color: whitesmoke;
+}
+
+.success {
+  color: rgb(35, 122, 35);
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+/* Media Queries pour les écrans plus grands */
+@media (min-width: 481px) {
+  .card-container {
+    grid-template-columns: repeat(2, 1fr); /* 2 cartes par ligne sur tablettes */
+  }
+
+  .card {
+    --size: clamp(200px, 40vmin, 400px); /* Taille des cartes pour tablettes */
+  }
+
+  .card__footer span:nth-of-type(1) {
+    font-size: calc(var(--size) * 0.05); /* Ajuste la taille de la police */
+  }
+
+  .card__footer span:nth-of-type(2) {
+    font-size: calc(var(--size) * 0.03); /* Ajuste la taille de la police */
+  }
+}
+
+@media (min-width: 768px) {
+  .card-container {
+    grid-template-columns: repeat(3, 1fr); 
+    max-width: 700px;
+    margin: auto;
+  }
+
+  .card {
+    --size: clamp(300px, 50vmin, 700px);
+  }
+
+  .card__footer span:nth-of-type(1) {
+    font-size: calc(var(--size) * 0.040); 
+  }
+
+  .card__footer span:nth-of-type(2) {
+    font-size: calc(var(--size) * 0.035);
+  }
+
+}
+
+@media (min-width: 1200px) {
+  .card-container {
+    grid-template-columns: repeat(3, 1fr); 
+    max-width: 1200px;
+  }
+
+  .card {
+    --size: clamp(300px, 50vmin, 600px);
+  }
+
+  .card__footer span:nth-of-type(1) {
+    font-size: calc(var(--size) * 0.065); 
+  }
+
+  .card__footer span:nth-of-type(2) {
+    font-size: calc(var(--size) * 0.035);
+  }
+
+}

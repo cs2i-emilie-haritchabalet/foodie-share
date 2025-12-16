@@ -1,0 +1,74 @@
+// eslint-disable-next-line no-unused-vars
+import React, { useEffect, useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
+import { FaHeart } from 'react-icons/fa';
+import '../assets/css/recipes-cards.css';
+import { FaHandPointer } from "react-icons/fa";
+import RecipeForm from './RecipeForm'
+
+const HomePage = () => {
+  const [recipes, setRecipes] = useState([]);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+  const fetchRecipes = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/foodie-share/best-rated`);
+      setRecipes(response.data);
+    } catch (error) {
+      setError('Erreur lors de la récupération des recettes.');
+      console.error('Erreur lors de la récupération des recettes:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchRecipes();
+  }, []);
+
+
+  const handleRecipeAdded = () => {
+    fetchRecipes();
+    navigate('/foodie-share/all');
+  };
+
+  return (
+    <div>
+      <h1>Recettes les mieux notées</h1>
+      {error && <p className="error">{error}</p>}
+      <div className='card-container'>
+        {recipes.map((recipe) => (
+          <div key={recipe._id} className="card" onClick={() => navigate(`/foodie-share/${recipe._id}`)}>
+
+            <img
+
+              src={recipe.imagePath ? `http://localhost:5000${recipe.imagePath}` : `http://localhost:5000/images/recipes/livre_recette.png`}
+              alt={recipe.title}
+              className="card__img"
+            />
+
+            <span className="card__footer">
+              <span>{recipe.title}</span>
+              <span>
+                <FaHeart style={{ color: 'red', marginRight: '8px' }} />
+                {recipe.likes}
+              </span>
+            </span>
+            <span className="card__action">
+              <FaHandPointer />
+            </span>
+          </div>
+        ))}
+      </div>
+      <div id="recipes">
+        <Link to="/foodie-share/all" >Retrouvez toutes nos recettes <span>ici</span></Link>
+      </div>
+      <div id="form">
+        <RecipeForm onRecipeAdded={handleRecipeAdded} />
+      </div>
+
+    </div>
+  );
+};
+
+export default HomePage;

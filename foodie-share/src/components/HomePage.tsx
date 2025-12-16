@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'preact/hooks';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
 import { FaHeart, FaHandPointer } from 'react-icons/fa';
 import '../assets/css/recipes-cards.css';
 import RecipeForm from './RecipeForm';
@@ -21,18 +20,22 @@ const HomePage = () => {
 
   const fetchRecipes = async () => {
     try {
-      const response = await axios.get(`http://localhost:3001/foodie-share/recipes/best-rated`);
-      setRecipes(response.data);
-    } catch (error) {
-      setError('Erreur lors de la récupération des recettes.');
-      console.error('Erreur lors de la récupération des recettes:', error);
+      const response = await fetch('/foodie-share/data/recipes.json');
+      if (!response.ok) throw new Error('Erreur lors de la récupération des recettes.');
+      const data: Recipe[] = await response.json();
+
+      // Trier par likes décroissants
+      const sorted = data.sort((a, b) => b.likes - a.likes).slice(0, 3);
+      setRecipes(sorted);
+    } catch (err) {
+      setError((err as Error).message);
+      console.error('Erreur lors de la récupération des recettes:', err);
     }
   };
 
   useEffect(() => {
     fetchRecipes();
   }, []);
-
 
   const handleRecipeAdded = () => {
     fetchRecipes();
@@ -45,15 +48,12 @@ const HomePage = () => {
       {error && <p className="error">{error}</p>}
       <div className='card-container'>
         {recipes.map((recipe) => (
-          <div key={recipe.id} className="card" onClick={() => navigate(`/foodie-share/recipes/${recipe.id}`)}>
-
+          <div key={recipe.id} className="card" onClick={() => navigate(`/recipes/${recipe.id}`)}>
             <img
-
-              src={recipe.imagePath ? `http://localhost:3001${recipe.imagePath}` : `http://localhost:3001/images/recipes/livre_recette.png`}
+              src={recipe.imagePath ? `/foodie-share${recipe.imagePath}` : '/foodie-share/images/recipes/livre_recette.png'}
               alt={recipe.title}
               className="card__img"
             />
-
             <span className="card__footer">
               <span>{recipe.title}</span>
               <span>
@@ -68,12 +68,11 @@ const HomePage = () => {
         ))}
       </div>
       <div id="recipes">
-        <Link to="/foodie-share/all" >Retrouvez toutes nos recettes <span>ici</span></Link>
+        <Link to="/all">Retrouvez toutes nos recettes <span>ici</span></Link>
       </div>
       <div id="form">
         <RecipeForm onRecipeAdded={handleRecipeAdded} />
       </div>
-
     </div>
   );
 };

@@ -75,7 +75,7 @@
     "ingredients": ["potiron", "oignon", "crème", "bouillon"],
     "steps": ["Couper", "Cuire", "Mixer"],
     "likes": 45,
-    "imagePath": "/images/recipes/veloute_potiron.jpg"
+    "imagePath": "/images/recipes/veloute_de_potiron.jpg"
   },
   {
     "id": 7,
@@ -95,7 +95,7 @@
     "ingredients": ["tomates", "huile d'olive", "basilic"],
     "steps": ["Couper", "Assaisonner"],
     "likes": 0,
-    "imagePath": "/images/recipes/carpaccio_tomates.jpg"
+    "imagePath": "/images/recipes/carpaccio_de_tomates.jpg"
   },
   {
     "id": 9,
@@ -105,7 +105,7 @@
     "ingredients": ["riz", "oeufs", "petits pois", "jambon"],
     "steps": ["Cuire le riz", "Sauter", "Mélanger"],
     "likes": 60,
-    "imagePath": "/images/recipes/riz_cantonais.jpg"
+    "imagePath": "/images/recipes/riz_cantonais.png"
   },
   {
     "id": 10,
@@ -115,7 +115,7 @@
     "ingredients": ["chocolat", "oeufs", "sucre"],
     "steps": ["Fondre le chocolat", "Monter les blancs", "Assembler"],
     "likes": 180,
-    "imagePath": "/images/recipes/mousse_chocolat.jpg",
+    "imagePath": "/images/recipes/mousse_au_chocolat.jpg",
     "comments": [
       { "user": "Laura", "message": "Ultra légère !" }
     ]
@@ -128,7 +128,7 @@
     "ingredients": ["pain", "tomates", "mozzarella", "basilic"],
     "steps": ["Griller le pain", "Garnir"],
     "likes": 30,
-    "imagePath": "/images/recipes/bruschetta.jpg"
+    "imagePath": "/images/recipes/bruschetta_tomate_mozzarella.jpg"
   },
   {
     "id": 12,
@@ -138,7 +138,7 @@
     "ingredients": ["pâtes", "viande", "tomates", "béchamel"],
     "steps": ["Monter", "Cuire"],
     "likes": 220,
-    "imagePath": "/images/recipes/lasagnes.jpg"
+    "imagePath": "/images/recipes/lasagnes_maison.jpg"
   },
   {
     "id": 13,
@@ -148,7 +148,7 @@
     "ingredients": ["crème", "vanille", "sucre"],
     "steps": ["Chauffer", "Refroidir"],
     "likes": 70,
-    "imagePath": "/images/recipes/panna_cotta.jpg"
+    "imagePath": "/images/recipes/panna_cotta_vanille.jpg"
   },
   {
     "id": 14,
@@ -158,7 +158,7 @@
     "ingredients": ["oeufs", "champignons", "beurre"],
     "steps": ["Battre les oeufs", "Cuire"],
     "likes": 10,
-    "imagePath": "/images/recipes/omelette_champignons.jpg"
+    "imagePath": "/images/recipes/omelette_aux_champignons.jpg"
   },
   {
     "id": 15,
@@ -168,7 +168,7 @@
     "ingredients": ["fruits de saison"],
     "steps": ["Couper", "Mélanger"],
     "likes": 0,
-    "imagePath": "/images/recipes/salade_fruits.jpg"
+    "imagePath": "/images/recipes/salade_de_fruits.jpg"
   }
 
 ]

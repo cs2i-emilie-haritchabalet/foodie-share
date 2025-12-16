@@ -21,7 +21,7 @@ const HomePage = () => {
 
   const fetchRecipes = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/foodie-share/best-rated`);
+      const response = await axios.get(`http://localhost:3001/foodie-share/best-rated`);
       setRecipes(response.data);
     } catch (error) {
       setError('Erreur lors de la récupération des recettes.');
@@ -49,7 +49,7 @@ const HomePage = () => {
 
             <img
 
-              src={recipe.imagePath ? `http://localhost:5000${recipe.imagePath}` : `http://localhost:5000/images/recipes/livre_recette.png`}
+              src={recipe.imagePath ? `http://localhost:3001${recipe.imagePath}` : `http://localhost:3001/images/recipes/livre_recette.png`}
               alt={recipe.title}
               className="card__img"
             />

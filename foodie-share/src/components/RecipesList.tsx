@@ -38,7 +38,7 @@ const [recipes, setRecipes] = useState<Recipe[]>([]);
 
     const fetchRecipes = async () => {
         try {
-            const response = await axios.get(`http://localhost:5000/foodie-share/all`);
+            const response = await axios.get(`http://localhost:3001/foodie-share/all`);
             setRecipes(response.data);
         } catch (error) {
             setError('Erreur lors de la récupération des recettes.');
@@ -109,7 +109,7 @@ const [recipes, setRecipes] = useState<Recipe[]>([]);
                 {filteredRecipes.map((recipe) => (
                     <div key={recipe._id} className="card" onClick={() => navigate(`/foodie-share/${recipe._id}`)}>
                         <img
-                            src={recipe.imagePath ? `http://localhost:5000${recipe.imagePath}` : `http://localhost:5000/images/recipes/livre_recette.png`}
+                            src={recipe.imagePath ? `http://localhost:3001${recipe.imagePath}` : `http://localhost:3001/images/recipes/livre_recette.png`}
                             alt={recipe.title}
                             className="card__img"
                         />

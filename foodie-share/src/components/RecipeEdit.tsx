@@ -39,7 +39,7 @@ const RecipeDetail = () => {
   useEffect(() => {
     const fetchRecipe = async () => {
       try {
-        const response = await axios.get<Recipe>(`http://localhost:5000/foodie-share/${id}`);
+        const response = await axios.get<Recipe>(`http://localhost:3001/foodie-share/${id}`);
         setRecipe(response.data);
       } catch (err) {
         setError('Erreur lors de la récupération de la recette.');
@@ -75,7 +75,7 @@ const RecipeDetail = () => {
 
   const handleLike = async () => {
     try {
-      const response = await axios.post<{ likes: number }>(`http://localhost:5000/foodie-share/${id}/like`);
+      const response = await axios.post<{ likes: number }>(`http://localhost:3001/foodie-share/${id}/like`);
       setRecipe({ ...recipe, likes: response.data.likes });
     } catch (err: any) {
       if (err.response?.status === 403) alert("Vous avez déjà aimé cette recette.");
@@ -89,7 +89,7 @@ const RecipeDetail = () => {
 
     try {
       const response = await axios.post<{ comments: Comment[] }>(
-        `http://localhost:5000/foodie-share/${id}/comment`,
+        `http://localhost:3001/foodie-share/${id}/comment`,
         { user: username, message: comment }
       );
       setRecipe({ ...recipe, comments: response.data.comments });
@@ -115,7 +115,7 @@ const RecipeDetail = () => {
 
       <img
         id="imgDetails"
-        src={recipe.imagePath ? `http://localhost:5000${recipe.imagePath}` : `http://localhost:5000/images/recipes/livre_recette.png`}
+        src={recipe.imagePath ? `http://localhost:3001${recipe.imagePath}` : `http://localhost:3001/images/recipes/livre_recette.png`}
         alt={recipe.title}
       />
 

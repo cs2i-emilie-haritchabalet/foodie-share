@@ -1,7 +1,7 @@
-### backend
+### TESTS
 
-lancer le back 
-```js
-npm run dev
+# Pour lancer les tests
+verifier d'etre dans le front puis faire la commande : 
 ```
-tourne sur le port 3001
+npx vitest
+```

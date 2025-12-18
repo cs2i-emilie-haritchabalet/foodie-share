@@ -5,3 +5,11 @@ verifier d'etre dans le front puis faire la commande :
 ```
 npx vitest
 ```
+
+### LINT
+
+lancer eslint 
+
+```
+npm run lint
+```

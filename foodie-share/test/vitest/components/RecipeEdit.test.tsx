@@ -41,11 +41,15 @@ beforeEach(() => {
     .spyOn(globalThis, "fetch" as any)
     .mockResolvedValue({
       ok: true,
-      json: async () => mockRecipes.map(r => ({ ...r, comments: r.comments?.map(c => ({...c})) })),
+      json: async () =>
+        mockRecipes.map((r) => ({
+          ...r,
+          comments: r.comments?.map((c) => ({ ...c })),
+        })),
     } as any);
 
   navigateMock.mockClear();
-  vi.clearAllMocks(); // ✅ reset aussi alert (défini dans setup.ts)
+  vi.clearAllMocks(); // reset mocks (inclut alert si défini dans setup.ts)
 });
 
 afterEach(() => {
@@ -59,6 +63,9 @@ describe("RecipeEdit (page détail)", () => {
     expect(await screen.findByText("Tarte aux pommes")).toBeInTheDocument();
     expect(screen.getByText("Catégorie: Dessert")).toBeInTheDocument();
     expect(screen.getByText("Une tarte délicieuse")).toBeInTheDocument();
+
+    // message venant de location.state si ton composant l’affiche
+    expect(screen.getByText("Recette modifiée !")).toBeInTheDocument();
 
     expect(fetchSpy).toHaveBeenCalledWith("/foodie-share/data/recipes.json");
   });
@@ -77,8 +84,8 @@ describe("RecipeEdit (page détail)", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /j'aime/i }));
 
-    expect(window.alert).toHaveBeenCalledTimes(1);
-    expect(window.alert).toHaveBeenCalledWith(
+    expect(globalThis.alert).toHaveBeenCalledTimes(1);
+    expect(globalThis.alert).toHaveBeenCalledWith(
       "Impossible d'aimer une recette en version statique."
     );
   });
@@ -87,14 +94,15 @@ describe("RecipeEdit (page détail)", () => {
     render(<RecipeDetails />);
     await screen.findByText("Tarte aux pommes");
 
-    // ✅ sur CI, plus fiable : submit du form (pas juste click)
     const btn = screen.getByRole("button", { name: "Commenter" });
     const form = btn.closest("form");
     expect(form).toBeTruthy();
 
     fireEvent.submit(form!);
 
-    expect(window.alert).toHaveBeenCalledTimes(1);
-    expect(window.alert).toHaveBeenCalledWith("Commentaire simulé (non enregistré)");
+    expect(globalThis.alert).toHaveBeenCalledTimes(1);
+    expect(globalThis.alert).toHaveBeenCalledWith(
+      "Commentaire simulé (non enregistré)"
+    );
   });
 });

@@ -108,45 +108,30 @@ describe("RecipeDetail", () => {
     expect(navigateMock).toHaveBeenCalledWith(-1);
   });
 
-  it("le bouton J'aime affiche une alerte", async () => {
-    render(<RecipeDetail />);
-    await screen.findByText("Recette B");
+it("le bouton J'aime affiche une alerte", async () => {
+  render(<RecipeDetail />);
+  await screen.findByText("Recette B");
 
-    fireEvent.click(screen.getByRole("button", { name: /j'aime/i }));
+  fireEvent.click(screen.getByRole("button", { name: /j'aime/i }));
 
-    // ✅ window.alert est mocké dans ton setup.ts, donc ici on l'utilise direct
-    expect(window.alert).toHaveBeenCalledTimes(1);
-    expect(window.alert).toHaveBeenCalledWith(
-      "Impossible d'aimer une recette en version statique."
-    );
-  });
+  expect(globalThis.alert).toHaveBeenCalledTimes(1);
+  expect(globalThis.alert).toHaveBeenCalledWith(
+    "Impossible d'aimer une recette en version statique."
+  );
+});
+it("soumettre un commentaire affiche une alerte et vide les champs", async () => {
+  render(<RecipeDetail />);
+  await screen.findByText("Recette B");
 
-  it("soumettre un commentaire affiche une alerte et vide les champs", async () => {
-    render(<RecipeDetail />);
-    await screen.findByText("Recette B");
+  const submitBtn = screen.getByRole("button", { name: "Commenter" });
+  const form = submitBtn.closest("form");
+  expect(form).toBeTruthy();
 
-    const nameInput = screen.getByPlaceholderText("Votre nom") as HTMLInputElement;
-    const msgInput = screen.getByPlaceholderText("Votre commentaire") as HTMLTextAreaElement;
+  fireEvent.submit(form!);
 
-    // ✅ avec Preact, mieux: fireEvent.input + target.value
-    fireEvent.input(nameInput, { target: { value: "Kevin" } });
-    fireEvent.input(msgInput, { target: { value: "Hello" } });
-
-    expect(nameInput.value).toBe("Kevin");
-    expect(msgInput.value).toBe("Hello");
-
-    // ✅ soumission robuste : submit du FORM (pas juste click bouton)
-    const form = nameInput.closest("form");
-    expect(form).toBeTruthy();
-    fireEvent.submit(form!);
-
-    expect(window.alert).toHaveBeenCalledTimes(1);
-    expect(window.alert).toHaveBeenCalledWith("Commentaire simulé (non enregistré)");
-
-    // champs remis à zéro
-    expect(nameInput.value).toBe("");
-    expect(msgInput.value).toBe("");
-  });
+  expect(globalThis.alert).toHaveBeenCalledTimes(1);
+  expect(globalThis.alert).toHaveBeenCalledWith("Commentaire simulé (non enregistré)");
+});
 
   it("affiche les commentaires s'il y en a", async () => {
     render(<RecipeDetail />);

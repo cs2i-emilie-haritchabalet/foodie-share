@@ -43,7 +43,7 @@ const RecipeDetail = () => {
                 const found = data.find(r => r.id === Number(id));
                 setRecipe(found ?? null);
             })
-            .catch(err => setError('Erreur lors de la récupération de la recette.'));
+            .catch(() => setError('Erreur lors de la récupération de la recette.'));
     }, [id]);
 
     // Carousel des commentaires

@@ -1,6 +1,7 @@
 //import pour ESlint
 import React from 'react';
 import { useState, useEffect } from 'preact/hooks';
+import type { JSX } from 'preact';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../assets/css/recipe-details.css';
 import { FaHeart, FaAngleDoubleLeft, FaRegComment } from 'react-icons/fa';
@@ -78,7 +79,7 @@ const RecipeDetail = () => {
                 <h1>{recipe.title}</h1>
                 <div className='likes'>
                     <span>{recipe.likes} <FaHeart style={{ color: 'red' }} /></span>
-                    <button id="addLike" onClick={handleLike}>J'aime</button>
+                    <button id="addLike" onClick={handleLike}>J&apos;aime</button>
                 </div>
             </div>
 
@@ -104,12 +105,12 @@ const RecipeDetail = () => {
                    <form onSubmit={handleCommentSubmit}>
                         <input
                             value={author}
-                            onInput={(e: any) => setAuthor(e.target.value)}
+                            onInput={(e: JSX.TargetedEvent<HTMLInputElement>) => setAuthor(e.currentTarget.value)}
                             placeholder="Votre nom"
                         />
                         <textarea
                             value={message}
-                            onInput={(e: any) => setMessage(e.target.value)}
+                            onInput={(e: JSX.TargetedEvent<HTMLTextAreaElement>) => setMessage(e.currentTarget.value)}
                             placeholder="Votre commentaire"
                         />
                         <button type="submit">Commenter</button>

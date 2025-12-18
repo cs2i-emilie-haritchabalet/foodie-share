@@ -4,12 +4,11 @@ on:
   push:
     branches:
       - main
-      - kevin
-      - emilie
 
   pull_request:
-   branches:
-    - main
+    branches:
+      - main
+
   workflow_dispatch:
 
 permissions:
@@ -37,6 +36,9 @@ jobs:
 
       - name: Install
         run: npm install
+
+      - name: Test
+        run: npm test
 
       - name: Build
         run: npm run build

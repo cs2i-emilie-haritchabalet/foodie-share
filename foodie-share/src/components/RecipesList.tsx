@@ -1,3 +1,5 @@
+//import pour ESlint
+import React from 'react';
 import { useState, useEffect } from 'preact/hooks';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../assets/css/recipes-cards.css';

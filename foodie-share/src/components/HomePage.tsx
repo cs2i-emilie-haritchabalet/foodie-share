@@ -1,3 +1,5 @@
+//import pour ESlint
+import React from 'react';
 import { useState, useEffect } from 'preact/hooks';
 import { useNavigate, Link } from 'react-router-dom';
 import { FaHeart, FaHandPointer } from 'react-icons/fa';

@@ -28,6 +28,9 @@ const RecipeDetail = () => {
     const [error, setError] = useState<string | null>(null);
     const [activeIndex, setActiveIndex] = useState(0);
     const intervalDuration = 3000;
+    const [author, setAuthor] = useState('');
+    const [message, setMessage] = useState('');
+
 
     // Récupération depuis le JSON statique
     useEffect(() => {
@@ -57,10 +60,13 @@ const RecipeDetail = () => {
 
     // Fonctions lecture seule
     const handleLike = () => alert("Impossible d'aimer une recette en version statique.");
-    const handleCommentSubmit = (e: Event) => { 
-        e.preventDefault(); 
-        alert("Impossible de commenter en version statique."); 
-    }
+    const handleCommentSubmit = (e: Event) => {
+        e.preventDefault();
+        alert("Commentaire simulé (non enregistré)");
+        setAuthor('');
+        setMessage('');
+    };
+
 
     return (
         <div id="divDetails">
@@ -93,18 +99,20 @@ const RecipeDetail = () => {
 
                 <div className="comments-section">
                     <h3>Commentaires ({recipe.comments?.length ?? 0})</h3>
-                    <form onSubmit={handleCommentSubmit}>
+                   <form onSubmit={handleCommentSubmit}>
                         <input
-                            type="text"
+                            value={author}
+                            onInput={(e: any) => setAuthor(e.target.value)}
                             placeholder="Votre nom"
-                            disabled
                         />
                         <textarea
+                            value={message}
+                            onInput={(e: any) => setMessage(e.target.value)}
                             placeholder="Votre commentaire"
-                            disabled
                         />
-                        <button type="submit" disabled>Commenter</button>
+                        <button type="submit">Commenter</button>
                     </form>
+
 
                     {recipe.comments && recipe.comments.length > 0 ? (
                         <div className='wrapper'>

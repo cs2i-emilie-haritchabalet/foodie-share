@@ -1,3 +1,6 @@
+// import pour ESLint
+import React from 'react';
+import type { JSX } from 'preact';
 import { useState } from 'preact/hooks';
 import { useNavigate } from 'react-router-dom';
 import '../assets/css/recipe-form.css';
@@ -31,44 +34,63 @@ function RecipeForm({ onRecipeAdded }: RecipeFormProps) {
     }
   };
 
-  const handleSubmit = (e: Event) => {
+  const handleSubmit = (e: JSX.TargetedEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Crée un objet recette simulé
-    const newRecipe = {
-      id: Date.now(), // id unique pour simuler
-      title,
-      description,
-      tag,
-      ingredients,
-      steps,
-      likes: 0,
-      imagePath: imagePath ? `/images/recipes/${imagePath}` : '/images/recipes/livre_recette.png',
-      comments: []
-    };
+    alert(
+      "Ajout simulé : sans backend, la recette n'est pas enregistrée.\n" +
+      "Fonctionnel avec une API REST."
+    );
 
-    // Ici, pas de backend, juste simuler l'ajout
-    console.log('Recette simulée ajoutée :', newRecipe);
-
-    onRecipeAdded(); // rafraîchir la liste
-    navigate('/foodie-share/all', { state: { successMessage: 'Recette ajoutée (simulation) !' } });
+    onRecipeAdded();
+    navigate('/foodie-share/all', {
+      state: { successMessage: 'Ajout simulé (sans backend)' }
+    });
   };
 
   return (
     <div className='formContainer'>
       <form onSubmit={handleSubmit}>
-        <input value={title} onInput={(e: any) => setTitle(e.target.value)} placeholder="Titre" required />
-        <textarea value={description} onInput={(e: any) => setDescription(e.target.value)} placeholder="Description" required />
-        <input value={ingredientInput} onInput={(e: any) => setIngredientInput(e.target.value)} placeholder="Ajouter un ingrédient" />
+        <input
+          value={title}
+          onInput={(e: JSX.TargetedEvent<HTMLInputElement>) => setTitle(e.currentTarget.value)}
+          placeholder="Titre"
+          required
+        />
+
+        <textarea
+          value={description}
+          onInput={(e: JSX.TargetedEvent<HTMLTextAreaElement>) => setDescription(e.currentTarget.value)}
+          placeholder="Description"
+          required
+        />
+
+        <input
+          value={ingredientInput}
+          onInput={(e: JSX.TargetedEvent<HTMLInputElement>) => setIngredientInput(e.currentTarget.value)}
+          placeholder="Ajouter un ingrédient"
+        />
         <button type="button" onClick={handleAddIngredient}>Ajouter ingrédient</button>
         <ul>{ingredients.map((i, idx) => <li key={idx}>{i}</li>)}</ul>
 
-        <input value={stepInput} onInput={(e: any) => setStepInput(e.target.value)} placeholder="Ajouter une étape" />
+        <input
+          value={stepInput}
+          onInput={(e: JSX.TargetedEvent<HTMLInputElement>) => setStepInput(e.currentTarget.value)}
+          placeholder="Ajouter une étape"
+        />
         <button type="button" onClick={handleAddStep}>Ajouter étape</button>
         <ol>{steps.map((s, idx) => <li key={idx}>{s}</li>)}</ol>
 
-        <input value={imagePath} onInput={(e: any) => setImagePath(e.target.value)} placeholder="Nom fichier image (dans /images/recipes)" />
-        <select value={tag} onInput={(e: any) => setTag(e.target.value)}>
+        <input
+          value={imagePath}
+          onInput={(e: JSX.TargetedEvent<HTMLInputElement>) => setImagePath(e.currentTarget.value)}
+          placeholder="Nom fichier image (dans /images/recipes)"
+        />
+
+        <select
+          value={tag}
+          onInput={(e: JSX.TargetedEvent<HTMLSelectElement>) => setTag(e.currentTarget.value)}
+        >
           <option>Entrée</option>
           <option>Plat</option>
           <option>Dessert</option>

@@ -4,7 +4,6 @@ import { useState, useEffect } from 'preact/hooks';
 import type { JSX } from 'preact';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../assets/css/recipe-details.css';
-import { useLocation } from 'react-router-dom';
 import { FaHeart, FaAngleDoubleLeft, FaRegComment } from 'react-icons/fa';
 import { useRecipes} from '../context/RecipesContext';
 import type { Recipe } from '../context/RecipesContext';

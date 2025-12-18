@@ -5,19 +5,7 @@ import { useParams, Link, useLocation, useNavigate } from 'react-router-dom';
 import '../assets/css/recipe-details.css';
 import { FaHeart, FaAngleDoubleLeft, FaTrashAlt, FaPenNib } from 'react-icons/fa';
 import recipesData from '../../public/data/recipes.json';
-
-type Comment = { user: string; message: string; };
-type Recipe = {
-  id: number;
-  title: string;
-  description: string;
-  tag: string;
-  ingredients: string[];
-  steps: string[];
-  likes: number;
-  imagePath?: string;
-  comments?: Comment[];
-};
+import type {Recipe} from '../context/RecipesContext'
 
 const RecipeDetail = () => {
   const { id } = useParams<{ id: string }>();

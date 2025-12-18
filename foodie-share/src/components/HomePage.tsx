@@ -5,16 +5,9 @@ import { useNavigate, Link } from 'react-router-dom';
 import { FaHeart, FaHandPointer } from 'react-icons/fa';
 import '../assets/css/recipes-cards.css';
 import RecipeForm from './RecipeForm';
+import type { Recipe } from '../context/RecipesContext';
 
 const HomePage = () => {
-
-  type Recipe = {
-    id: number;
-    title: string;
-    imagePath?: string;
-    likes: number;
-    tag?: string;
-  };
 
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [error, setError] = useState<string | null>(null);

@@ -5,35 +5,37 @@ import type { JSX } from 'preact';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../assets/css/recipe-details.css';
 import { FaHeart, FaAngleDoubleLeft, FaRegComment } from 'react-icons/fa';
+import { useRecipes} from '../context/RecipesContext';
+import type { Recipe } from '../context/RecipesContext';
 
-type Comment = {
-    user: string;
-    message: string;
-};
-
-type Recipe = {
-    id: number;
-    title: string;
-    description: string;
-    tag: string;
-    ingredients: string[];
-    steps: string[];
-    likes: number;
-    imagePath?: string;
-    comments?: Comment[];
-};
 
 const RecipeDetail = () => {
-    const { id } = useParams();
-    const navigate = useNavigate();
+  const { state, dispatch } = useRecipes();
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
 
-    const [recipe, setRecipe] = useState<Recipe | null>(null);
-    const [error, setError] = useState<string | null>(null);
-    const [activeIndex, setActiveIndex] = useState(0);
-    const intervalDuration = 3000;
-    const [author, setAuthor] = useState('');
-    const [message, setMessage] = useState('');
+  const [author, setAuthor] = useState('');
+  const [message, setMessage] = useState('');
+  const [recipe, setRecipe] = useState<Recipe | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const intervalDuration = 3000;
 
+  const handleLike = () => {
+    if (recipe) dispatch({ type: 'ADD_LIKE', payload: { id: recipe.id } });
+  };
+
+  const handleCommentSubmit = (e: JSX.TargetedEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (recipe) {
+      dispatch({
+        type: 'ADD_COMMENT',
+        payload: { id: recipe.id, comment: { user: author, message } }
+      });
+      setAuthor('');
+      setMessage('');
+    }
+  };
 
     // Récupération depuis le JSON statique
     useEffect(() => {
@@ -61,15 +63,7 @@ const RecipeDetail = () => {
 
     const goBack = () => navigate(-1);
 
-    // Fonctions lecture seule
-    const handleLike = () => alert("Impossible d'aimer une recette en version statique.");
-    const handleCommentSubmit = (e: Event) => {
-        e.preventDefault();
-        alert("Commentaire simulé (non enregistré)");
-        setAuthor('');
-        setMessage('');
-    };
-
+    if (!recipe) return <p>Recette non trouvée</p>;
 
     return (
         <div id="divDetails">

@@ -32,27 +32,19 @@ function RecipeForm({ onRecipeAdded }: RecipeFormProps) {
   };
 
   const handleSubmit = (e: Event) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    // Crée un objet recette simulé
-    const newRecipe = {
-      id: Date.now(), // id unique pour simuler
-      title,
-      description,
-      tag,
-      ingredients,
-      steps,
-      likes: 0,
-      imagePath: imagePath ? `/images/recipes/${imagePath}` : '/images/recipes/livre_recette.png',
-      comments: []
-    };
+  alert(
+    "Ajout simulé : sans backend, la recette n'est pas enregistrée.\n" +
+    "Fonctionnel avec une API REST."
+  );
 
-    // Ici, pas de backend, juste simuler l'ajout
-    console.log('Recette simulée ajoutée :', newRecipe);
+  onRecipeAdded();
+  navigate('/foodie-share/all', {
+    state: { successMessage: 'Ajout simulé (sans backend)' }
+  });
+};
 
-    onRecipeAdded(); // rafraîchir la liste
-    navigate('/foodie-share/all', { state: { successMessage: 'Recette ajoutée (simulation) !' } });
-  };
 
   return (
     <div className='formContainer'>

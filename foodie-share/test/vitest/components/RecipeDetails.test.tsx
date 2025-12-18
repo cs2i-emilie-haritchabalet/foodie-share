@@ -58,20 +58,25 @@ const mockRecipes: Recipe[] = [
 let fetchSpy: ReturnType<typeof vi.spyOn>;
 
 beforeEach(() => {
+  // fetch mock
   fetchSpy = vi
     .spyOn(globalThis, "fetch" as any)
     .mockResolvedValue({
       ok: true,
-      json: async () => mockRecipes.map(r => ({ ...r, comments: r.comments?.map(c => ({ ...c })) })),
+      json: async () =>
+        mockRecipes.map((r) => ({
+          ...r,
+          comments: r.comments?.map((c) => ({ ...c })) ?? [],
+        })),
     } as any);
 
-  vi.spyOn(window, "alert").mockImplementation(() => {});
+  // on reset juste les mocks
+  vi.clearAllMocks();
   navigateMock.mockClear();
 });
 
 afterEach(() => {
   fetchSpy?.mockRestore();
-  vi.restoreAllMocks();
 });
 
 describe("RecipeDetail", () => {
@@ -87,7 +92,6 @@ describe("RecipeDetail", () => {
     expect(screen.getByText("Catégorie: Dessert")).toBeInTheDocument();
     expect(screen.getByText("Desc B")).toBeInTheDocument();
 
-    // ingrédients & étapes
     expect(screen.getByText("sucre")).toBeInTheDocument();
     expect(screen.getByText("farine")).toBeInTheDocument();
     expect(screen.getByText("melanger")).toBeInTheDocument();
@@ -98,23 +102,20 @@ describe("RecipeDetail", () => {
 
   it("le bouton Retour appelle navigate(-1)", async () => {
     render(<RecipeDetail />);
-
     await screen.findByText("Recette B");
 
-    const backBtn = screen.getByRole("button", { name: /retour/i });
-    fireEvent.click(backBtn);
-
+    fireEvent.click(screen.getByRole("button", { name: /retour/i }));
     expect(navigateMock).toHaveBeenCalledWith(-1);
   });
 
   it("le bouton J'aime affiche une alerte", async () => {
     render(<RecipeDetail />);
-
     await screen.findByText("Recette B");
 
-    const likeBtn = screen.getByRole("button", { name: /j'aime/i });
-    fireEvent.click(likeBtn);
+    fireEvent.click(screen.getByRole("button", { name: /j'aime/i }));
 
+    // ✅ window.alert est mocké dans ton setup.ts, donc ici on l'utilise direct
+    expect(window.alert).toHaveBeenCalledTimes(1);
     expect(window.alert).toHaveBeenCalledWith(
       "Impossible d'aimer une recette en version statique."
     );
@@ -122,21 +123,24 @@ describe("RecipeDetail", () => {
 
   it("soumettre un commentaire affiche une alerte et vide les champs", async () => {
     render(<RecipeDetail />);
-
     await screen.findByText("Recette B");
 
     const nameInput = screen.getByPlaceholderText("Votre nom") as HTMLInputElement;
     const msgInput = screen.getByPlaceholderText("Votre commentaire") as HTMLTextAreaElement;
-    const submitBtn = screen.getByRole("button", { name: "Commenter" });
 
+    // ✅ avec Preact, mieux: fireEvent.input + target.value
     fireEvent.input(nameInput, { target: { value: "Kevin" } });
     fireEvent.input(msgInput, { target: { value: "Hello" } });
 
     expect(nameInput.value).toBe("Kevin");
     expect(msgInput.value).toBe("Hello");
 
-    fireEvent.click(submitBtn);
+    // ✅ soumission robuste : submit du FORM (pas juste click bouton)
+    const form = nameInput.closest("form");
+    expect(form).toBeTruthy();
+    fireEvent.submit(form!);
 
+    expect(window.alert).toHaveBeenCalledTimes(1);
     expect(window.alert).toHaveBeenCalledWith("Commentaire simulé (non enregistré)");
 
     // champs remis à zéro
@@ -146,7 +150,6 @@ describe("RecipeDetail", () => {
 
   it("affiche les commentaires s'il y en a", async () => {
     render(<RecipeDetail />);
-
     await screen.findByText("Recette B");
 
     expect(screen.getByText("Commentaires (2)")).toBeInTheDocument();

@@ -5,23 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import '../assets/css/recipes-cards.css';
 import { FaHeart, FaAngleDoubleLeft, FaHandPointer } from 'react-icons/fa';
 import RecipeForm from './RecipeForm';
-
-type Comment = {
-  user: string;
-  message: string;
-};
-
-type Recipe = {
-  id: number;
-  title: string;
-  description: string;
-  tag: string;
-  ingredients: string[];
-  steps: string[];
-  likes: number;
-  imagePath?: string;
-  comments?: Comment[];
-};
+import type { Recipe } from '../context/RecipesContext';
 
 const RecipesList = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);

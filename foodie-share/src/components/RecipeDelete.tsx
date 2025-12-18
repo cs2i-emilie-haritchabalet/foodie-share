@@ -2,17 +2,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'preact/hooks';
-
-type Recipe = {
-  id: number;
-  title: string;
-  description: string;
-  tag?: string;
-  ingredients?: string[];
-  steps?: string[];
-  likes?: number;
-  imagePath?: string;
-};
+import type { Recipe } from '../context/RecipesContext';
 
 const RecipeDelete = () => {
     const { id } = useParams();

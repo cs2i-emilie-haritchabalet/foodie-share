@@ -10,7 +10,7 @@ import type { Recipe } from '../context/RecipesContext';
 
 
 const RecipeDetail = () => {
-  const { state, dispatch } = useRecipes();
+  const { dispatch } = useRecipes();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 

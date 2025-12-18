@@ -1,4 +1,6 @@
-import { useParams, useNavigate } from 'react-router-dom';
+//import pour ESlint
+import React from 'react';
+import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'preact/hooks';
 
 type Recipe = {
@@ -14,7 +16,6 @@ type Recipe = {
 
 const RecipeDelete = () => {
     const { id } = useParams();
-    const navigate = useNavigate();
     const [recipe, setRecipe] = useState<Recipe | null>(null);
 
     useEffect(() => {

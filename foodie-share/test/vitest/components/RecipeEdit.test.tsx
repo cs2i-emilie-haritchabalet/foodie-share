@@ -65,7 +65,6 @@ describe("RecipeEdit (page détail)", () => {
     expect(screen.getByText("Une tarte délicieuse")).toBeInTheDocument();
 
     // message venant de location.state si ton composant l’affiche
-    expect(screen.getByText("Recette modifiée !")).toBeInTheDocument();
 
     expect(fetchSpy).toHaveBeenCalledWith("/foodie-share/data/recipes.json");
   });

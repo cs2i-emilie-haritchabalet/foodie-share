@@ -1,3 +1,4 @@
+import "@testing-library/jest-dom";
 import { vi } from "vitest";
 
 const alertMock = vi.fn();
@@ -9,3 +10,4 @@ vi.stubGlobal("alert", alertMock);
 if (typeof window !== "undefined") {
   window.alert = alertMock as any;
 }
+

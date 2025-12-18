@@ -1,18 +1,11 @@
-import "@testing-library/jest-dom";
 import { vi } from "vitest";
 
-// jsdom n’a pas toujours alert/confirm/prompt
-Object.defineProperty(window, "alert", {
-  value: vi.fn(),
-  writable: true,
-});
+const alertMock = vi.fn();
 
-Object.defineProperty(window, "confirm", {
-  value: vi.fn(),
-  writable: true,
-});
+// Mock global
+vi.stubGlobal("alert", alertMock);
 
-Object.defineProperty(window, "prompt", {
-  value: vi.fn(),
-  writable: true,
-});
+// Force window.alert à pointer sur le même mock
+if (typeof window !== "undefined") {
+  window.alert = alertMock as any;
+}

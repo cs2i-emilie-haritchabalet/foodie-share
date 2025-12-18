@@ -1,7 +1,9 @@
+//import pour ESlint
+import React from 'react';
 import { useState, useEffect } from 'preact/hooks';
 import { useParams, Link, useLocation, useNavigate } from 'react-router-dom';
 import '../assets/css/recipe-details.css';
-import { FaHeart, FaAngleDoubleLeft, FaTrashAlt, FaPenNib, FaRegComment } from 'react-icons/fa';
+import { FaHeart, FaAngleDoubleLeft, FaTrashAlt, FaPenNib } from 'react-icons/fa';
 import recipesData from '../../public/data/recipes.json';
 
 type Comment = { user: string; message: string; };
@@ -37,7 +39,7 @@ useEffect(() => {
 
   const goBack = () => navigate(-1);
   const handleLike = () => alert("Like simulé !");
-  const handleCommentSubmit = (e: any) => {
+  const handleCommentSubmit = (e: Event) => {
     e.preventDefault();
     alert("Commentaire simulé !");
   };
@@ -48,7 +50,7 @@ useEffect(() => {
       {showSuccessMessage && <p className="success">{location.state.successMessage}</p>}
       <h1>{recipe.title}</h1>
       <span>{recipe.likes} <FaHeart /></span>
-      <button onClick={handleLike}>J'aime</button>
+      <button onClick={handleLike}>J&apos;aime</button>
 
       <img src={recipe.imagePath} alt={recipe.title} />
 

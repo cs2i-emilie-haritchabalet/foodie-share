@@ -73,7 +73,7 @@ const fetchRecipes = async () => {
         {filteredRecipes.map((recipe) => (
           <div key={recipe.id} className="card" onClick={() => navigate(`/recipes/${recipe.id}`)}>
            <img
-              src={recipe.imagePath}
+              src={recipe.imagePath || '/images/recipes/livre_recette.png'}
               alt={recipe.title}
               className="card__img"
             />

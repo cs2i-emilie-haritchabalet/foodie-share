@@ -8,5 +8,6 @@ export default defineConfig({
     globals: true,
     setupFiles: "./test/vitest/setup.ts",
     include: ["test/**/*.test.ts", "test/**/*.test.tsx"]
-  }
+  },
+  base: '/foodie-share/',
 });

@@ -17,7 +17,7 @@ export type Recipe = {
   comments?: Comment[];
 };
 
-type Action =
+export type Action =
   | { type: 'ADD_LIKE'; payload: { id: number } }
   | { type: 'ADD_COMMENT'; payload: { id: number; comment: Comment } }
   | { type: 'ADD_RECIPE'; payload: Recipe };
@@ -25,7 +25,7 @@ type Action =
 type State = { recipes: Recipe[] };
 const initialState: State = { recipes: [] };
 
-function recipesReducer(state: State, action: Action): State {
+export function recipesReducer(state: State, action: Action): State {
   switch (action.type) {
     case 'ADD_LIKE':
       return {
@@ -49,7 +49,7 @@ function recipesReducer(state: State, action: Action): State {
 }
 
 // Contexte
-const RecipesContext = createContext<{
+export const RecipesContext = createContext<{
   state: State;
   dispatch: (action: Action) => void;
 }>({ state: initialState, dispatch: () => null });

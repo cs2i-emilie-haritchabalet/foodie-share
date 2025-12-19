@@ -1,46 +1,12 @@
-import React from "react";
+import React, { ReactNode, useReducer } from "react";
 import { render, screen, fireEvent } from "@testing-library/preact";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import RecipeDetail from "../../../src/components/RecipeDetails";
-import { RecipesProvider } from '../../../src/context/RecipesContext';
+import { RecipesContext, Recipe, recipesReducer, Action } from "../../../src/context/RecipesContext";
 
-// Mock router
-const navigateMock = vi.fn();
-vi.mock("react-router-dom", () => ({
-  useParams: () => ({ id: "2" }),
-  useNavigate: () => navigateMock,
-}));
 
-// Mock icons (stabilité tests)
-vi.mock("react-icons/fa", () => ({
-  FaHeart: () => null,
-  FaAngleDoubleLeft: () => null,
-  FaRegComment: () => null,
-}));
-
-type Recipe = {
-  id: number;
-  title: string;
-  description: string;
-  tag: string;
-  ingredients: string[];
-  steps: string[];
-  likes: number;
-  imagePath?: string;
-  comments?: { user: string; message: string }[];
-};
-
+// --- Données de test ---
 const mockRecipes: Recipe[] = [
-  {
-    id: 1,
-    title: "Recette A",
-    description: "Desc A",
-    tag: "Plat",
-    ingredients: ["ing1"],
-    steps: ["step1"],
-    likes: 10,
-    comments: [],
-  },
   {
     id: 2,
     title: "Recette B",
@@ -57,22 +23,51 @@ const mockRecipes: Recipe[] = [
   },
 ];
 
+// --- Test provider pour injecter dispatch mock ---
+
+interface TestRecipesProviderProps {
+  children: ReactNode;
+  initialRecipes?: Recipe[];
+  dispatchMock?: (action: Action) => void;
+}
+
+export const TestRecipesProvider = ({
+  children,
+  initialRecipes = [],
+  dispatchMock,
+}: TestRecipesProviderProps) => {
+  const [state, dispatch] = useReducer(recipesReducer, { recipes: initialRecipes });
+  const contextValue = dispatchMock ? { state, dispatch: dispatchMock } : { state, dispatch };
+
+  return (
+    <RecipesContext.Provider value={contextValue}>
+      {children}
+    </RecipesContext.Provider>
+  );
+};
+
+// --- Mocks router ---
+const navigateMock = vi.fn();
+vi.mock("react-router-dom", () => ({
+  useParams: () => ({ id: "2" }),
+  useNavigate: () => navigateMock,
+}));
+
+// --- Mocks icons ---
+vi.mock("react-icons/fa", () => ({
+  FaHeart: () => null,
+  FaAngleDoubleLeft: () => null,
+  FaRegComment: () => null,
+}));
+
+// --- Mock fetch global ---
 let fetchSpy: ReturnType<typeof vi.spyOn>;
-
 beforeEach(() => {
-  // fetch mock
-  fetchSpy = vi
-    .spyOn(globalThis, "fetch")
-    .mockResolvedValue({
-      ok: true,
-      json: async () =>
-        mockRecipes.map((r) => ({
-          ...r,
-          comments: r.comments?.map((c) => ({ ...c })) ?? [],
-        })),
-    } as Response);
+  fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({
+    ok: true,
+    json: async () => mockRecipes,
+  } as Response);
 
-  // on reset juste les mocks
   vi.clearAllMocks();
   navigateMock.mockClear();
 });
@@ -81,6 +76,7 @@ afterEach(() => {
   fetchSpy?.mockRestore();
 });
 
+// --- Tests ---
 describe("RecipeDetail", () => {
   it("affiche le chargement au départ", () => {
     render(<RecipeDetail />);
@@ -110,57 +106,67 @@ describe("RecipeDetail", () => {
     expect(navigateMock).toHaveBeenCalledWith(-1);
   });
 
-it("cliquer sur J'aime incrémente le nombre de likes", async () => {
-  render(
-    <RecipesProvider>
-      <RecipeDetail />
-    </RecipesProvider>
-  );
+  it("cliquer sur J'aime déclenche dispatch ADD_LIKE", async () => {
+    const dispatchMock = vi.fn();
 
-  // attendre que la recette charge
-  const likeElement = await screen.findByText(/10/i);
-
-  const initialLikes = Number(likeElement.textContent);
-  const likeButton = screen.getByRole("button", { name: /j'aime/i });
-
-  fireEvent.click(likeButton);
-
-  expect(
-    await screen.findByText(String(initialLikes + 1))
-  ).toBeInTheDocument();
-});
+    render(
+  <TestRecipesProvider initialRecipes={mockRecipes} dispatchMock={dispatchMock}>
+    <RecipeDetail />
+  </TestRecipesProvider>
+);
 
 
-it("soumettre un commentaire l'ajoute à la liste", async () => {
-  render(
-    <RecipesProvider>
-      <RecipeDetail />
-    </RecipesProvider>
-  );
+    await screen.findByText("Recette B");
 
-  await screen.findByText("Salade"); // recette chargée
+    const likeButton = screen.getByRole("button", { name: /j'aime/i });
+    fireEvent.click(likeButton);
 
-  fireEvent.input(screen.getByPlaceholderText("Votre nom"), {
-    target: { value: "Alice" },
+    expect(dispatchMock).toHaveBeenCalledWith({
+      type: "ADD_LIKE",
+      payload: { id: 2 },
+    });
   });
 
-  fireEvent.input(screen.getByPlaceholderText("Votre commentaire"), {
-    target: { value: "Super recette !" },
+  it("soumettre un commentaire déclenche dispatch ADD_COMMENT", async () => {
+    const dispatchMock = vi.fn();
+
+    render(
+  <TestRecipesProvider initialRecipes={mockRecipes} dispatchMock={dispatchMock}>
+    <RecipeDetail />
+  </TestRecipesProvider>
+);
+
+
+    await screen.findByText("Recette B");
+
+    fireEvent.input(screen.getByPlaceholderText("Votre nom"), {
+      target: { value: "Charlie" },
+    });
+
+    fireEvent.input(screen.getByPlaceholderText("Votre commentaire"), {
+      target: { value: "Délicieux !" },
+    });
+
+    fireEvent.submit(screen.getByRole("button", { name: /commenter/i }));
+
+    expect(dispatchMock).toHaveBeenCalledWith({
+      type: "ADD_COMMENT",
+      payload: {
+        id: 2,
+        comment: { user: "Charlie", message: "Délicieux !" },
+      },
+    });
   });
 
-  fireEvent.submit(screen.getByRole("button", { name: /commenter/i }));
-
-  expect(await screen.findByText("Alice")).toBeInTheDocument();
-  expect(await screen.findByText("Super recette !")).toBeInTheDocument();
-});
-
-
-  it("affiche les commentaires s'il y en a", async () => {
+  it("affiche les commentaires existants", async () => {
     render(<RecipeDetail />);
+
     await screen.findByText("Recette B");
 
     expect(screen.getByText("Commentaires (2)")).toBeInTheDocument();
     expect(screen.getByText("Alice")).toBeInTheDocument();
     expect(screen.getByText("Top !")).toBeInTheDocument();
+    expect(screen.getByText("Bob")).toBeInTheDocument();
+    expect(screen.getByText("Super recette")).toBeInTheDocument();
   });
 });

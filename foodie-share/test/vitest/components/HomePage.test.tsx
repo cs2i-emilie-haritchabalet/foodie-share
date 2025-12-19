@@ -55,7 +55,7 @@ describe("HomePage", () => {
     render(<HomePage />);
     // on attend que fetch soit bien appelé
     await vi.waitFor(() => expect(fetchSpy).toHaveBeenCalled());
-    expect(fetchSpy.mock.calls[0][0]).toBe("/foodie-share/data/recipes.json");
+    expect(fetchSpy.mock.calls[0][0]).toBe("/data/recipes.json");
   });
 
   it("affiche les 3 recettes avec le plus de likes", async () => {

@@ -1,16 +1,14 @@
-//import pour ESlint
-import React from 'react';
-import { useState, useEffect } from 'preact/hooks';
+import React, { useState, useEffect } from 'react';
 import type { JSX } from 'preact';
 import { useParams, useNavigate } from 'react-router-dom';
-import '../assets/css/recipe-details.css';
 import { FaHeart, FaAngleDoubleLeft, FaRegComment } from 'react-icons/fa';
-import { useRecipes} from '../context/RecipesContext';
+import { useRecipes } from '../context/RecipesContext';
 import type { Recipe } from '../context/RecipesContext';
 import recipesData from '../data/recipes.json';
+import '../assets/css/recipe-details.css';
 
 const RecipeDetail = () => {
-  const { dispatch } = useRecipes();
+  const { state, dispatch } = useRecipes();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
@@ -21,45 +19,46 @@ const RecipeDetail = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const intervalDuration = 3000;
 
-  // Charger la recette depuis le JSON
-  useEffect(() => {
-    try {
-      const found = recipesData.find(r => r.id === Number(id));
-      setRecipe(found ?? null);
-    } catch {
-      setError('Erreur lors de la récupération de la recette.');
+  // Charger la recette depuis le contexte si dispo, sinon depuis le JSON
+ useEffect(() => {
+  try {
+    let found: Recipe | null = state.recipes.find(r => r.id === Number(id)) || null;
+    if (!found) {
+      found = recipesData.find(r => r.id === Number(id)) || null;
+      if (found) {
+        dispatch({ type: 'ADD_RECIPE', payload: found });
+      }
     }
-  }, [id]);
+    setRecipe(found);
+  } catch {
+    setError('Erreur lors de la récupération de la recette.');
+  }
+}, [id, state.recipes, dispatch]);
+
 
   if (!recipe && !error) return <p>Chargement...</p>;
   if (error) return <p>{error}</p>;
   if (!recipe) return <p>Recette non trouvée</p>;
 
-  // Like : mettre à jour le contexte ET le state local
+  // Like : contexte + state local
   const handleLike = () => {
-    if (!recipe) return;
     dispatch({ type: 'ADD_LIKE', payload: { id: recipe.id } });
     setRecipe({ ...recipe, likes: recipe.likes + 1 });
   };
 
-  // Ajouter un commentaire : contexte + state local
+  // Commentaire : contexte + state local
   const handleCommentSubmit = (e: JSX.TargetedEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!recipe) return;
-
     const newComment = { user: author, message };
     dispatch({ type: 'ADD_COMMENT', payload: { id: recipe.id, comment: newComment } });
-
-    // mettre à jour le state local pour réafficher le commentaire
     setRecipe({ ...recipe, comments: [...(recipe.comments ?? []), newComment] });
-
     setAuthor('');
     setMessage('');
   };
 
   // Carousel des commentaires
   useEffect(() => {
-    if (recipe?.comments && recipe.comments.length > 0) {
+    if (recipe?.comments?.length) {
       const interval = setInterval(
         () => setActiveIndex(prev => (prev + 1) % recipe.comments!.length),
         intervalDuration
@@ -73,7 +72,6 @@ const RecipeDetail = () => {
   return (
     <div id="divDetails">
       <button id="goBack" onClick={goBack}><FaAngleDoubleLeft /> Retour</button>
-
       <div id="titleDetails">
         <h1>{recipe.title}</h1>
         <div className='likes'>
@@ -81,24 +79,19 @@ const RecipeDetail = () => {
           <button id="addLike" onClick={handleLike}>J&apos;aime</button>
         </div>
       </div>
-
       <img
         src={recipe.imagePath ? import.meta.env.BASE_URL + recipe.imagePath : import.meta.env.BASE_URL + 'images/recipes/livre_recette.png'}
         alt={recipe.title}
       />
-
       <div className="bodyDetails">
         <h3>Catégorie: {recipe.tag}</h3>
         <p>{recipe.description}</p>
-
         <div className='recipe'>
           <h2>Ingrédients</h2>
           <ul>{recipe.ingredients.map((ing, i) => <li key={i}>{ing}</li>)}</ul>
-
           <h2>Étapes</h2>
           <ol>{recipe.steps.map((step, i) => <li key={i}>{step}</li>)}</ol>
         </div>
-
         <div className="comments-section">
           <h3>Commentaires ({recipe.comments?.length ?? 0})</h3>
           <form onSubmit={handleCommentSubmit}>
@@ -135,6 +128,5 @@ const RecipeDetail = () => {
     </div>
   );
 };
-
 
 export default RecipeDetail;

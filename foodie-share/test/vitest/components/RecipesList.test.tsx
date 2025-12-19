@@ -1,26 +1,28 @@
-import { render, screen, fireEvent, within } from "@testing-library/preact";
+import React from "react";
+import { render, screen, fireEvent} from "@testing-library/preact";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
-// ✅ Mock router
+// Mock router
 const navigateMock = vi.fn();
 vi.mock("react-router-dom", () => ({
   useNavigate: () => navigateMock,
   useLocation: () => ({ state: { successMessage: "Ajout OK !" } }),
 }));
 
-// ✅ Mock icons
+// Mock icons
 vi.mock("react-icons/fa", () => ({
   FaHeart: () => null,
   FaAngleDoubleLeft: () => null,
   FaHandPointer: () => null,
 }));
 
-// ✅ Mock RecipeForm (sinon tu testes aussi le form)
+// Mock RecipeForm (sinon tu testes aussi le form)
 vi.mock("../../../src/components/RecipeForm", () => ({
-  default: ({ onRecipeAdded }: any) => (
+  default: ({ onRecipeAdded }: { onRecipeAdded: () => void }) => (
     <button onClick={onRecipeAdded}>MockForm</button>
   ),
 }));
+
 
 import RecipesList from "../../../src/components/RecipesList";
 
@@ -61,11 +63,12 @@ beforeEach(() => {
   navigateMock.mockClear();
 
   fetchSpy = vi
-    .spyOn(globalThis, "fetch" as any)
-    .mockResolvedValue({
-      ok: true,
-      json: async () => mockRecipes.map((r) => ({ ...r })),
-    } as any);
+  .spyOn(globalThis, "fetch")
+  .mockResolvedValue({
+    ok: true,
+    json: async () => mockRecipes,
+  } as Response);
+
 });
 
 afterEach(() => {
@@ -121,7 +124,11 @@ describe("RecipesList", () => {
   });
 
   it("en cas d'erreur fetch, affiche le message d'erreur", async () => {
-    fetchSpy.mockResolvedValueOnce({ ok: false } as any);
+    fetchSpy.mockResolvedValueOnce({
+      ok: false,
+      json: async () => [],
+    } as Response);
+
     render(<RecipesList />);
 
     expect(

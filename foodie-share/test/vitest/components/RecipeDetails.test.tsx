@@ -1,6 +1,8 @@
+import React from "react";
 import { render, screen, fireEvent } from "@testing-library/preact";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import RecipeDetail from "../../../src/components/RecipeDetails";
+import { RecipesProvider } from '../../../src/context/RecipesContext';
 
 // Mock router
 const navigateMock = vi.fn();
@@ -60,7 +62,7 @@ let fetchSpy: ReturnType<typeof vi.spyOn>;
 beforeEach(() => {
   // fetch mock
   fetchSpy = vi
-    .spyOn(globalThis, "fetch" as any)
+    .spyOn(globalThis, "fetch")
     .mockResolvedValue({
       ok: true,
       json: async () =>
@@ -68,7 +70,7 @@ beforeEach(() => {
           ...r,
           comments: r.comments?.map((c) => ({ ...c })) ?? [],
         })),
-    } as any);
+    } as Response);
 
   // on reset juste les mocks
   vi.clearAllMocks();
@@ -108,30 +110,50 @@ describe("RecipeDetail", () => {
     expect(navigateMock).toHaveBeenCalledWith(-1);
   });
 
-it("le bouton J'aime affiche une alerte", async () => {
-  render(<RecipeDetail />);
-  await screen.findByText("Recette B");
-
-  fireEvent.click(screen.getByRole("button", { name: /j'aime/i }));
-
-  expect(globalThis.alert).toHaveBeenCalledTimes(1);
-  expect(globalThis.alert).toHaveBeenCalledWith(
-    "Impossible d'aimer une recette en version statique."
+it("cliquer sur J'aime incrémente le nombre de likes", async () => {
+  render(
+    <RecipesProvider>
+      <RecipeDetail />
+    </RecipesProvider>
   );
+
+  // attendre que la recette charge
+  const likeElement = await screen.findByText(/10/i);
+
+  const initialLikes = Number(likeElement.textContent);
+  const likeButton = screen.getByRole("button", { name: /j'aime/i });
+
+  fireEvent.click(likeButton);
+
+  expect(
+    await screen.findByText(String(initialLikes + 1))
+  ).toBeInTheDocument();
 });
-it("soumettre un commentaire affiche une alerte et vide les champs", async () => {
-  render(<RecipeDetail />);
-  await screen.findByText("Recette B");
 
-  const submitBtn = screen.getByRole("button", { name: "Commenter" });
-  const form = submitBtn.closest("form");
-  expect(form).toBeTruthy();
 
-  fireEvent.submit(form!);
+it("soumettre un commentaire l'ajoute à la liste", async () => {
+  render(
+    <RecipesProvider>
+      <RecipeDetail />
+    </RecipesProvider>
+  );
 
-  expect(globalThis.alert).toHaveBeenCalledTimes(1);
-  expect(globalThis.alert).toHaveBeenCalledWith("Commentaire simulé (non enregistré)");
+  await screen.findByText("Salade"); // recette chargée
+
+  fireEvent.input(screen.getByPlaceholderText("Votre nom"), {
+    target: { value: "Alice" },
+  });
+
+  fireEvent.input(screen.getByPlaceholderText("Votre commentaire"), {
+    target: { value: "Super recette !" },
+  });
+
+  fireEvent.submit(screen.getByRole("button", { name: /commenter/i }));
+
+  expect(await screen.findByText("Alice")).toBeInTheDocument();
+  expect(await screen.findByText("Super recette !")).toBeInTheDocument();
 });
+
 
   it("affiche les commentaires s'il y en a", async () => {
     render(<RecipeDetail />);

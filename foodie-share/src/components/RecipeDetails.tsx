@@ -77,7 +77,7 @@ const RecipeDetail = () => {
             </div>
 
             <img
-              src={recipe.imagePath}
+              src={recipe.imagePath || '/images/recipes/livre_recette.png'}
               alt={recipe.title}
             />
 

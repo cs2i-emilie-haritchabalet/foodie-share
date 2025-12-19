@@ -1,15 +1,50 @@
-import React, { useReducer } from "react";
-import type { ReactNode } from "react";
+import React, { useReducer, type ReactNode } from "react";
 import { render, screen, fireEvent } from "@testing-library/preact";
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import RecipeDetail from "../../../src/components/RecipeDetails";
-import { RecipesContext, recipesReducer } from "../../../src/context/RecipesContext";
-import type {Recipe, Action} from "../../../src/context/RecipesContext";
+import { describe, it, expect, vi } from "vitest";
 
-// --- Données de test ---
+import RecipeDetail from "../../../src/components/RecipeDetails";
+import {
+  RecipesContext,
+  recipesReducer,
+  type Recipe,
+  type Action,
+} from "../../../src/context/RecipesContext";
+
+/* -------------------------------------------------------------------------- */
+/*                           Mock du fichier JSON                              */
+/* -------------------------------------------------------------------------- */
+/**
+ * ⚠️ IMPORTANT :
+ * - Le composant importe recipes.json
+ * - Vitest hoiste vi.mock
+ * - Donc données INLINE, export default
+ */
+vi.mock("../../../src/data/recipes.json", () => ({
+  default: [
+    {
+      id: 55,
+      title: "Recette B",
+      description: "Desc B",
+      tag: "Dessert",
+      ingredients: ["sucre", "farine"],
+      steps: ["melanger", "cuire"],
+      likes: 42,
+      imagePath: "/images/recipes/b.jpg",
+      comments: [
+        { user: "Alice", message: "Top !" },
+        { user: "Bob", message: "Super recette" },
+      ],
+    },
+  ],
+}));
+
+/* -------------------------------------------------------------------------- */
+/*                       Données mock pour le Context                          */
+/* -------------------------------------------------------------------------- */
+
 const mockRecipes: Recipe[] = [
   {
-    id: 2,
+    id: 55,
     title: "Recette B",
     description: "Desc B",
     tag: "Dessert",
@@ -24,7 +59,9 @@ const mockRecipes: Recipe[] = [
   },
 ];
 
-// --- Test provider pour injecter dispatch mock ---
+/* -------------------------------------------------------------------------- */
+/*                         Provider de test custom                              */
+/* -------------------------------------------------------------------------- */
 
 interface TestRecipesProviderProps {
   children: ReactNode;
@@ -32,60 +69,56 @@ interface TestRecipesProviderProps {
   dispatchMock?: (action: Action) => void;
 }
 
-export const TestRecipesProvider = ({
+const TestRecipesProvider = ({
   children,
   initialRecipes = [],
   dispatchMock,
 }: TestRecipesProviderProps) => {
-  const [state, dispatch] = useReducer(recipesReducer, { recipes: initialRecipes });
-  const contextValue = dispatchMock ? { state, dispatch: dispatchMock } : { state, dispatch };
+  const [state, dispatch] = useReducer(recipesReducer, {
+    recipes: initialRecipes,
+  });
 
   return (
-    <RecipesContext.Provider value={contextValue}>
+    <RecipesContext.Provider
+      value={{
+        state,
+        dispatch: dispatchMock ?? dispatch,
+      }}
+    >
       {children}
     </RecipesContext.Provider>
   );
 };
 
-// --- Mocks router ---
+/* -------------------------------------------------------------------------- */
+/*                                   Mocks                                    */
+/* -------------------------------------------------------------------------- */
+
+// Router
 const navigateMock = vi.fn();
 vi.mock("react-router-dom", () => ({
-  useParams: () => ({ id: "2" }),
+  useParams: () => ({ id: "55" }),
   useNavigate: () => navigateMock,
 }));
 
-// --- Mocks icons ---
+// Icônes
 vi.mock("react-icons/fa", () => ({
   FaHeart: () => null,
   FaAngleDoubleLeft: () => null,
   FaRegComment: () => null,
 }));
 
-// --- Mock fetch global ---
-let fetchSpy: ReturnType<typeof vi.spyOn>;
-beforeEach(() => {
-  fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({
-    ok: true,
-    json: async () => mockRecipes,
-  } as Response);
+/* -------------------------------------------------------------------------- */
+/*                                   Tests                                    */
+/* -------------------------------------------------------------------------- */
 
-  vi.clearAllMocks();
-  navigateMock.mockClear();
-});
-
-afterEach(() => {
-  fetchSpy?.mockRestore();
-});
-
-// --- Tests ---
 describe("RecipeDetail", () => {
-  it("affiche le chargement au départ", () => {
-    render(<RecipeDetail />);
-    expect(screen.getByText("Chargement...")).toBeInTheDocument();
-  });
-
-  it("charge la recette et affiche ses infos", async () => {
-    render(<RecipeDetail />);
+  it("affiche la recette et ses informations", async () => {
+    render(
+      <TestRecipesProvider initialRecipes={mockRecipes}>
+        <RecipeDetail />
+      </TestRecipesProvider>
+    );
 
     expect(await screen.findByText("Recette B")).toBeInTheDocument();
     expect(screen.getByText("Catégorie: Dessert")).toBeInTheDocument();
@@ -95,12 +128,15 @@ describe("RecipeDetail", () => {
     expect(screen.getByText("farine")).toBeInTheDocument();
     expect(screen.getByText("melanger")).toBeInTheDocument();
     expect(screen.getByText("cuire")).toBeInTheDocument();
-
-    expect(fetchSpy).toHaveBeenCalledWith("../data/recipes.json");
   });
 
   it("le bouton Retour appelle navigate(-1)", async () => {
-    render(<RecipeDetail />);
+    render(
+      <TestRecipesProvider initialRecipes={mockRecipes}>
+        <RecipeDetail />
+      </TestRecipesProvider>
+    );
+
     await screen.findByText("Recette B");
 
     fireEvent.click(screen.getByRole("button", { name: /retour/i }));
@@ -111,20 +147,21 @@ describe("RecipeDetail", () => {
     const dispatchMock = vi.fn();
 
     render(
-  <TestRecipesProvider initialRecipes={mockRecipes} dispatchMock={dispatchMock}>
-    <RecipeDetail />
-  </TestRecipesProvider>
-);
-
+      <TestRecipesProvider
+        initialRecipes={mockRecipes}
+        dispatchMock={dispatchMock}
+      >
+        <RecipeDetail />
+      </TestRecipesProvider>
+    );
 
     await screen.findByText("Recette B");
 
-    const likeButton = screen.getByRole("button", { name: /j'aime/i });
-    fireEvent.click(likeButton);
+    fireEvent.click(screen.getByRole("button", { name: /j'aime/i }));
 
     expect(dispatchMock).toHaveBeenCalledWith({
       type: "ADD_LIKE",
-      payload: { id: 2 },
+      payload: { id: 55 },
     });
   });
 
@@ -132,11 +169,13 @@ describe("RecipeDetail", () => {
     const dispatchMock = vi.fn();
 
     render(
-  <TestRecipesProvider initialRecipes={mockRecipes} dispatchMock={dispatchMock}>
-    <RecipeDetail />
-  </TestRecipesProvider>
-);
-
+      <TestRecipesProvider
+        initialRecipes={mockRecipes}
+        dispatchMock={dispatchMock}
+      >
+        <RecipeDetail />
+      </TestRecipesProvider>
+    );
 
     await screen.findByText("Recette B");
 
@@ -153,14 +192,18 @@ describe("RecipeDetail", () => {
     expect(dispatchMock).toHaveBeenCalledWith({
       type: "ADD_COMMENT",
       payload: {
-        id: 2,
+        id: 55,
         comment: { user: "Charlie", message: "Délicieux !" },
       },
     });
   });
 
   it("affiche les commentaires existants", async () => {
-    render(<RecipeDetail />);
+    render(
+      <TestRecipesProvider initialRecipes={mockRecipes}>
+        <RecipeDetail />
+      </TestRecipesProvider>
+    );
 
     await screen.findByText("Recette B");
 

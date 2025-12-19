@@ -59,7 +59,7 @@ describe("RecipeDelete", () => {
     ).toBeInTheDocument();
 
     expect(screen.getByText("Recette B")).toBeInTheDocument();
-    expect(fetchSpy).toHaveBeenCalledWith("/data/recipes.json");
+    expect(fetchSpy).toHaveBeenCalledWith("../data/recipes.json");
   });
 
   it("affiche une alerte au clic sur 'Confirmer la suppression'", async () => {

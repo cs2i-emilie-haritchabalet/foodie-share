@@ -5,7 +5,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 // Mock du JSON pour ce test spécifique
 vi.mock('../../../src/data/recipes.json', () => ({
   default: [
-    { id: 1,
+    { id: 47,
       title: "Tarte aux pommes",
       description: "Desc",
       tag: "Dessert",
@@ -70,7 +70,7 @@ describe("RecipesList", () => {
     render(<RecipesList />);
     await screen.findByText("Tarte aux pommes");
     fireEvent.click(screen.getByText("Tarte aux pommes"));
-    expect(navigateMock).toHaveBeenCalledWith("/recipes/1");
+    expect(navigateMock).toHaveBeenCalledWith("/recipes/47");
   });
 
   it("affiche une image par défaut si imagePath est absent", async () => {

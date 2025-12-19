@@ -1,15 +1,13 @@
-//import pour ESlint
-import React from 'react';
-import { useState, useEffect } from 'preact/hooks';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import '../assets/css/recipes-cards.css';
 import { FaHeart, FaAngleDoubleLeft, FaHandPointer } from 'react-icons/fa';
 import RecipeForm from './RecipeForm';
 import recipesData from '../data/recipes.json';
-import type { Recipe } from '../context/RecipesContext';
+import { useRecipes } from '../context/RecipesContext';
+import '../assets/css/recipes-cards.css';
 
 const RecipesList = () => {
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const { state, dispatch } = useRecipes();
   const [error, setError] = useState<string | null>(null);
   const [selectedTag, setSelectedTag] = useState('');
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
@@ -17,21 +15,16 @@ const RecipesList = () => {
   const location = useLocation();
   const tags = ['Entrée', 'Plat', 'Dessert'];
 
-  // Charger le JSON local
-const fetchRecipes = async () => {
-  try {
-    // On utilise directement le JSON importé
-    const data: Recipe[] = recipesData;
-    setRecipes(data);
-  } catch (err) {
-    setError((err as Error).message);
-    console.error('Erreur lors de la récupération des recettes');
-  }
-};
-
+  // Initialisation : si contexte vide, charger depuis JSON et ajouter au contexte
   useEffect(() => {
-    fetchRecipes();
-  }, []);
+    try {
+      if (state.recipes.length === 0) {
+        recipesData.forEach(r => dispatch({ type: 'ADD_RECIPE', payload: r }));
+      }
+    } catch (err) {
+      setError((err as Error).message);
+    }
+  }, [state.recipes, dispatch]);
 
   useEffect(() => {
     if (location.state?.successMessage) {
@@ -42,12 +35,13 @@ const fetchRecipes = async () => {
   }, [location.state]);
 
   const handleRecipeAdded = () => {
-    fetchRecipes(); // pour simuler le rafraîchissement
+    navigate(0); // ou naviguer vers /all pour rafraîchir la liste
   };
 
+  // Filtrer par tag
   const filteredRecipes = selectedTag
-    ? recipes.filter((recipe) => recipe.tag === selectedTag)
-    : recipes;
+    ? state.recipes.filter(recipe => recipe.tag === selectedTag)
+    : state.recipes;
 
   return (
     <div>
@@ -61,7 +55,7 @@ const fetchRecipes = async () => {
         onChange={(e) => setSelectedTag(e.currentTarget.value)}
       >
         <option value="">Tous</option>
-        {tags.map((tag) => (
+        {tags.map(tag => (
           <option key={tag} value={tag}>{tag}</option>
         ))}
       </select>
@@ -70,9 +64,9 @@ const fetchRecipes = async () => {
       {error && <p className="error">{error}</p>}
 
       <div className="card-container">
-        {filteredRecipes.map((recipe) => (
+        {filteredRecipes.map(recipe => (
           <div key={recipe.id} className="card" onClick={() => navigate(`/recipes/${recipe.id}`)}>
-           <img
+            <img
               src={recipe.imagePath ? import.meta.env.BASE_URL + recipe.imagePath : import.meta.env.BASE_URL + 'images/recipes/livre_recette.png'}
               alt={recipe.title}
               className="card__img"

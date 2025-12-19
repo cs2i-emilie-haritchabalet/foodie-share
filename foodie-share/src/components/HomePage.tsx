@@ -1,47 +1,36 @@
-//import pour ESlint
-import React from 'react';
-import { useState, useEffect } from 'preact/hooks';
+import React, { useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { FaHeart, FaHandPointer } from 'react-icons/fa';
 import '../assets/css/recipes-cards.css';
 import RecipeForm from './RecipeForm';
-import type { Recipe } from '../context/RecipesContext';
+import { useRecipes } from '../context/RecipesContext';
 import recipesData from '../data/recipes.json';
 
-
 const HomePage = () => {
-
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const { state, dispatch } = useRecipes();
   const navigate = useNavigate();
 
-  const fetchRecipes = async () => {
-    try {
-      const data: Recipe[] = recipesData;
-      // Trier par likes décroissants et prendre les 3 premiers
-      const sorted = data.sort((a, b) => b.likes - a.likes).slice(0, 3);
-      setRecipes(sorted);
-    } catch (err) {
-      setError((err as Error).message);
-      console.error('Erreur lors de la récupération des recettes');
-    }
-  };
-
+  // Charger les recettes JSON dans le contexte au premier rendu
   useEffect(() => {
-    fetchRecipes();
-  }, []);
+    if (state.recipes.length === 0) {
+      recipesData.forEach(recipe => dispatch({ type: 'ADD_RECIPE', payload: recipe }));
+    }
+  }, [dispatch, state.recipes.length]);
+
+  // Trier et prendre les 3 recettes les plus likées
+  const topRecipes = [...state.recipes]
+    .sort((a, b) => b.likes - a.likes)
+    .slice(0, 3);
 
   const handleRecipeAdded = () => {
-    fetchRecipes();
-    navigate('/foodie-share/all');
+    navigate('/all');
   };
 
   return (
     <div>
       <h1>Recettes les mieux notées</h1>
-      {error && <p className="error">{error}</p>}
       <div className='card-container'>
-        {recipes.map((recipe) => (
+        {topRecipes.map((recipe) => (
           <div key={recipe.id} className="card" onClick={() => navigate(`/recipes/${recipe.id}`)}>
             <img
               src={recipe.imagePath ? import.meta.env.BASE_URL + recipe.imagePath : import.meta.env.BASE_URL + 'images/recipes/livre_recette.png'}

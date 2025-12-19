@@ -1,11 +1,14 @@
+import React from "react";
 import { render, screen } from "@testing-library/preact";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import HomePage from "../../../src/components/HomePage";
+import type { PropsWithChildren } from "react";
+
 
 // 1) Router mock
 vi.mock("react-router-dom", () => ({
   useNavigate: () => vi.fn(),
-  Link: ({ children }: any) => <span>{children}</span>,
+ Link: ({ children }: PropsWithChildren) => <span>{children}</span>,
 }));
 
 // 2) Icons mock (évite l'erreur "object is not extensible" dans certains setups)
@@ -29,12 +32,12 @@ const mockRecipes = [
 let fetchSpy: ReturnType<typeof vi.spyOn>;
 
 beforeEach(() => {
-  fetchSpy = vi
-    .spyOn(globalThis, "fetch" as any)
-    .mockResolvedValue({
-      ok: true,
-      json: async () => mockRecipes.map((r) => ({ ...r })),
-    } as any);
+ fetchSpy = vi
+  .spyOn(globalThis, "fetch")
+  .mockResolvedValue({
+    ok: true,
+    json: async () => mockRecipes,
+  } as Response);
 });
 
 afterEach(() => {

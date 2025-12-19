@@ -1,3 +1,4 @@
+import React from "react";
 import { render, screen, fireEvent } from "@testing-library/preact";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import RecipeDelete from "../../../src/components/RecipeDelete";
@@ -17,11 +18,11 @@ let fetchSpy: ReturnType<typeof vi.spyOn>;
 beforeEach(() => {
   // Mock fetch
   fetchSpy = vi
-    .spyOn(globalThis, "fetch" as any)
-    .mockResolvedValue({
-      ok: true,
-      json: async () => mockRecipes.map((r) => ({ ...r })),
-    } as any);
+  .spyOn(globalThis, "fetch")
+  .mockResolvedValue({
+    ok: true,
+    json: async () => mockRecipes,
+  } as Response);
 
   // Mock alert
   vi.spyOn(window, "alert").mockImplementation(() => {});
@@ -35,7 +36,10 @@ afterEach(() => {
 describe("RecipeDelete", () => {
   it("affiche 'Recette introuvable' si la recette n'existe pas", async () => {
     // On remplace useParams pour un id inexistant
-    vi.doMock("react-router-dom", () => ({ useParams: () => ({ id: "999" }) }));
+   vi.resetModules();
+   vi.doMock("react-router-dom", () => ({
+    useParams: () => ({ id: "999" }),
+   }));
 
     // Re-import du composant avec le nouveau mock
     const { default: RecipeDeleteWithMissing } = await import(

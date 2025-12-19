@@ -1,6 +1,10 @@
+import React from "react";
 import { render, screen, fireEvent } from "@testing-library/preact";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import RecipeDetails from "../../../src/components/RecipeDetails";
+import type { PropsWithChildren } from "react";
+import { RecipesProvider } from '../../../src/context/RecipesContext';
+import RecipeDetail from "../../../src/components/RecipeDetails";
 
 // Router mocks
 const navigateMock = vi.fn();
@@ -8,7 +12,7 @@ vi.mock("react-router-dom", () => ({
   useParams: () => ({ id: "1" }),
   useNavigate: () => navigateMock,
   useLocation: () => ({ state: { successMessage: "Recette modifiée !" } }),
-  Link: ({ children }: any) => <span>{children}</span>,
+  Link: ({ children }: PropsWithChildren) => <span>{children}</span>,
 }));
 
 // Mock icons complet
@@ -38,7 +42,7 @@ let fetchSpy: ReturnType<typeof vi.spyOn>;
 
 beforeEach(() => {
   fetchSpy = vi
-    .spyOn(globalThis, "fetch" as any)
+    .spyOn(globalThis, "fetch")
     .mockResolvedValue({
       ok: true,
       json: async () =>
@@ -46,7 +50,7 @@ beforeEach(() => {
           ...r,
           comments: r.comments?.map((c) => ({ ...c })),
         })),
-    } as any);
+    } as Response);
 
   navigateMock.mockClear();
   vi.clearAllMocks(); // reset mocks (inclut alert si défini dans setup.ts)
@@ -77,31 +81,47 @@ describe("RecipeEdit (page détail)", () => {
     expect(navigateMock).toHaveBeenCalledWith(-1);
   });
 
-  it("cliquer sur J'aime déclenche une alerte", async () => {
-    render(<RecipeDetails />);
-    await screen.findByText("Tarte aux pommes");
+  it("cliquer sur J'aime incrémente le nombre de likes", async () => {
+  render(
+    <RecipesProvider>
+      <RecipeDetail />
+    </RecipesProvider>
+  );
 
-    fireEvent.click(screen.getByRole("button", { name: /j'aime/i }));
+  // attendre que la recette charge
+  const likeElement = await screen.findByText(/10/i);
 
-    expect(globalThis.alert).toHaveBeenCalledTimes(1);
-    expect(globalThis.alert).toHaveBeenCalledWith(
-      "Impossible d'aimer une recette en version statique."
-    );
+  const initialLikes = Number(likeElement.textContent);
+  const likeButton = screen.getByRole("button", { name: /j'aime/i });
+
+  fireEvent.click(likeButton);
+
+  expect(
+    await screen.findByText(String(initialLikes + 1))
+  ).toBeInTheDocument();
+});
+
+
+it("soumettre un commentaire l'ajoute à la liste", async () => {
+  render(
+    <RecipesProvider>
+      <RecipeDetail />
+    </RecipesProvider>
+  );
+
+  await screen.findByText("Salade"); // recette chargée
+
+  fireEvent.input(screen.getByPlaceholderText("Votre nom"), {
+    target: { value: "Alice" },
   });
 
-  it("soumettre le commentaire déclenche une alerte", async () => {
-    render(<RecipeDetails />);
-    await screen.findByText("Tarte aux pommes");
-
-    const btn = screen.getByRole("button", { name: "Commenter" });
-    const form = btn.closest("form");
-    expect(form).toBeTruthy();
-
-    fireEvent.submit(form!);
-
-    expect(globalThis.alert).toHaveBeenCalledTimes(1);
-    expect(globalThis.alert).toHaveBeenCalledWith(
-      "Commentaire simulé (non enregistré)"
-    );
+  fireEvent.input(screen.getByPlaceholderText("Votre commentaire"), {
+    target: { value: "Super recette !" },
   });
+
+  fireEvent.submit(screen.getByRole("button", { name: /commenter/i }));
+
+  expect(await screen.findByText("Alice")).toBeInTheDocument();
+  expect(await screen.findByText("Super recette !")).toBeInTheDocument();
+});
 });

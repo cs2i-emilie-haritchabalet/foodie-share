@@ -6,6 +6,8 @@ import { FaHeart, FaHandPointer } from 'react-icons/fa';
 import '../assets/css/recipes-cards.css';
 import RecipeForm from './RecipeForm';
 import type { Recipe } from '../context/RecipesContext';
+import recipesData from '../data/recipes.json';
+
 
 const HomePage = () => {
 
@@ -15,16 +17,13 @@ const HomePage = () => {
 
   const fetchRecipes = async () => {
     try {
-      const response = await fetch('/data/recipes.json');
-      if (!response.ok) throw new Error('Erreur lors de la récupération des recettes.');
-      const data: Recipe[] = await response.json();
-
-      // Trier par likes décroissants
+      const data: Recipe[] = recipesData;
+      // Trier par likes décroissants et prendre les 3 premiers
       const sorted = data.sort((a, b) => b.likes - a.likes).slice(0, 3);
       setRecipes(sorted);
     } catch (err) {
       setError((err as Error).message);
-      console.error('Erreur lors de la récupération des recettes:', err);
+      console.error('Erreur lors de la récupération des recettes');
     }
   };
 
@@ -43,9 +42,9 @@ const HomePage = () => {
       {error && <p className="error">{error}</p>}
       <div className='card-container'>
         {recipes.map((recipe) => (
-          <div key={recipe.id} className="card" onClick={() => navigate(`/images/recipes/${recipe.id}`)}>
+          <div key={recipe.id} className="card" onClick={() => navigate(`/recipes/${recipe.id}`)}>
             <img
-              src={recipe.imagePath ? `${recipe.imagePath}` : '/images/recipes/livre_recette.png'}
+              src={recipe.imagePath}
               alt={recipe.title}
               className="card__img"
             />

@@ -77,9 +77,10 @@ const RecipeDetail = () => {
             </div>
 
             <img
-              src={recipe.imagePath || '/images/recipes/livre_recette.png'}
-              alt={recipe.title}
+                src={recipe.imagePath ? import.meta.env.BASE_URL + recipe.imagePath : import.meta.env.BASE_URL + 'images/recipes/livre_recette.png'}
+                alt={recipe.title}
             />
+
 
             <div className="bodyDetails">
                 <h3>Catégorie: {recipe.tag}</h3>

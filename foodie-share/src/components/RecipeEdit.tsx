@@ -4,7 +4,7 @@ import { useState, useEffect } from 'preact/hooks';
 import { useParams, Link, useLocation, useNavigate } from 'react-router-dom';
 import '../assets/css/recipe-details.css';
 import { FaHeart, FaAngleDoubleLeft, FaTrashAlt, FaPenNib } from 'react-icons/fa';
-import recipesData from '../../public/data/recipes.json';
+import recipesData from '../../src/data/recipes.json';
 import type {Recipe} from '../context/RecipesContext'
 
 const RecipeDetail = () => {

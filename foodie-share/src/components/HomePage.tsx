@@ -15,7 +15,7 @@ const HomePage = () => {
 
   const fetchRecipes = async () => {
     try {
-      const response = await fetch('/foodie-share/data/recipes.json');
+      const response = await fetch('/data/recipes.json');
       if (!response.ok) throw new Error('Erreur lors de la récupération des recettes.');
       const data: Recipe[] = await response.json();
 
@@ -45,7 +45,7 @@ const HomePage = () => {
         {recipes.map((recipe) => (
           <div key={recipe.id} className="card" onClick={() => navigate(`/recipes/${recipe.id}`)}>
             <img
-              src={recipe.imagePath ? `/foodie-share${recipe.imagePath}` : '/foodie-share/images/recipes/livre_recette.png'}
+              src={recipe.imagePath ? `/foodie-share${recipe.imagePath}` : '/images/recipes/livre_recette.png'}
               alt={recipe.title}
               className="card__img"
             />

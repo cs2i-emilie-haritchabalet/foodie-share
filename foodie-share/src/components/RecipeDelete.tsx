@@ -9,7 +9,7 @@ const RecipeDelete = () => {
     const [recipe, setRecipe] = useState<Recipe | null>(null);
 
     useEffect(() => {
-        fetch('/foodie-share/data/recipes.json')
+        fetch('/data/recipes.json')
         .then(res => res.json())
         .then((data: Recipe[]) => {
             const found = data.find(r => r.id === Number(id));

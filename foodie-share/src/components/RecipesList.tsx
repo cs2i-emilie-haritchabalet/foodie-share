@@ -19,7 +19,7 @@ const RecipesList = () => {
   // Charger le JSON local
   const fetchRecipes = async () => {
     try {
-      const response = await fetch('/foodie-share/data/recipes.json');
+      const response = await fetch('/data/recipes.json');
       if (!response.ok) throw new Error('Erreur lors du chargement du JSON');
       const data: Recipe[] = await response.json();
       setRecipes(data);

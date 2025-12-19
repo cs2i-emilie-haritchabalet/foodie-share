@@ -71,7 +71,7 @@ describe("RecipeEdit (page détail)", () => {
 
     // message venant de location.state si ton composant l’affiche
 
-    expect(fetchSpy).toHaveBeenCalledWith("/data/recipes.json");
+    expect(fetchSpy).toHaveBeenCalledWith("../data/recipes.json");
   });
 
   it("le bouton Retour appelle navigate(-1)", async () => {

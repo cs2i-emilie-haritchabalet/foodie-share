@@ -96,7 +96,7 @@ describe("RecipeDetail", () => {
     expect(screen.getByText("melanger")).toBeInTheDocument();
     expect(screen.getByText("cuire")).toBeInTheDocument();
 
-    expect(fetchSpy).toHaveBeenCalledWith("/data/recipes.json");
+    expect(fetchSpy).toHaveBeenCalledWith("../data/recipes.json");
   });
 
   it("le bouton Retour appelle navigate(-1)", async () => {

@@ -83,7 +83,7 @@ describe("RecipesList", () => {
     expect(screen.getByText("Toutes nos recettes")).toBeInTheDocument();
 
     expect(await screen.findByText("Burger")).toBeInTheDocument();
-    expect(fetchSpy).toHaveBeenCalledWith("/data/recipes.json");
+    expect(fetchSpy).toHaveBeenCalledWith("../data/recipes.json");
   });
 
   it("affiche le message de succès venant de location.state", async () => {

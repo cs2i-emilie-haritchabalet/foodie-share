@@ -1,9 +1,10 @@
-import React, { ReactNode, useReducer } from "react";
+import React, { useReducer } from "react";
+import type { ReactNode } from "react";
 import { render, screen, fireEvent } from "@testing-library/preact";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import RecipeDetail from "../../../src/components/RecipeDetails";
-import { RecipesContext, Recipe, recipesReducer, Action } from "../../../src/context/RecipesContext";
-
+import { RecipesContext, recipesReducer } from "../../../src/context/RecipesContext";
+import type {Recipe, Action} from "../../../src/context/RecipesContext";
 
 // --- Données de test ---
 const mockRecipes: Recipe[] = [

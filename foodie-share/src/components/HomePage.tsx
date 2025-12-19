@@ -44,7 +44,7 @@ const HomePage = () => {
         {recipes.map((recipe) => (
           <div key={recipe.id} className="card" onClick={() => navigate(`/recipes/${recipe.id}`)}>
             <img
-              src={recipe.imagePath || '/images/recipes/livre_recette.png'}
+              src={recipe.imagePath ? import.meta.env.BASE_URL + recipe.imagePath : import.meta.env.BASE_URL + 'images/recipes/livre_recette.png'}
               alt={recipe.title}
               className="card__img"
             />

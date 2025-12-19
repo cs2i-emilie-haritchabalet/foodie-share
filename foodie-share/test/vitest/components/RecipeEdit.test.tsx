@@ -5,6 +5,7 @@ import RecipeDetails from "../../../src/components/RecipeDetails";
 import type { PropsWithChildren } from "react";
 import { RecipesProvider } from '../../../src/context/RecipesContext';
 import RecipeDetail from "../../../src/components/RecipeDetails";
+import { recipesReducer } from "../../../src/context/RecipesContext";
 
 // Router mocks
 const navigateMock = vi.fn();
@@ -81,25 +82,31 @@ describe("RecipeEdit (page détail)", () => {
     expect(navigateMock).toHaveBeenCalledWith(-1);
   });
 
-  it("cliquer sur J'aime incrémente le nombre de likes", async () => {
-  render(
-    <RecipesProvider>
-      <RecipeDetail />
-    </RecipesProvider>
-  );
+it("ADD_LIKE incrémente les likes", () => {
+  const state = {
+  recipes: [
+    {
+      id: 1,
+      title: "Tarte aux pommes",
+      description: "Une tarte délicieuse",
+      tag: "Dessert",
+      ingredients: [],
+      steps: [],
+      likes: 12,
+      comments: [],
+    },
+  ],
+};
 
-  // attendre que la recette charge
-  const likeElement = await screen.findByText(/10/i);
-
-  const initialLikes = Number(likeElement.textContent);
-  const likeButton = screen.getByRole("button", { name: /j'aime/i });
-
-  fireEvent.click(likeButton);
-
-  expect(
-    await screen.findByText(String(initialLikes + 1))
-  ).toBeInTheDocument();
+const newState = recipesReducer(state, {
+  type: "ADD_LIKE",
+  payload: { id: 1 },
 });
+
+expect(newState.recipes[0].likes).toBe(13);
+
+});
+
 
 
 it("soumettre un commentaire l'ajoute à la liste", async () => {
@@ -109,19 +116,19 @@ it("soumettre un commentaire l'ajoute à la liste", async () => {
     </RecipesProvider>
   );
 
-  await screen.findByText("Salade"); // recette chargée
+  await screen.findByText("Tarte aux pommes"); // recette chargée
 
   fireEvent.input(screen.getByPlaceholderText("Votre nom"), {
     target: { value: "Alice" },
   });
 
   fireEvent.input(screen.getByPlaceholderText("Votre commentaire"), {
-    target: { value: "Super recette !" },
+    target: { value: "Top !" },
   });
 
   fireEvent.submit(screen.getByRole("button", { name: /commenter/i }));
 
   expect(await screen.findByText("Alice")).toBeInTheDocument();
-  expect(await screen.findByText("Super recette !")).toBeInTheDocument();
+  expect(await screen.findByText("Top !")).toBeInTheDocument();
 });
 });

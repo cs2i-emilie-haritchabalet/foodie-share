@@ -5,6 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import '../assets/css/recipes-cards.css';
 import { FaHeart, FaAngleDoubleLeft, FaHandPointer } from 'react-icons/fa';
 import RecipeForm from './RecipeForm';
+import recipesData from '../data/recipes.json';
 import type { Recipe } from '../context/RecipesContext';
 
 const RecipesList = () => {
@@ -17,17 +18,16 @@ const RecipesList = () => {
   const tags = ['Entrée', 'Plat', 'Dessert'];
 
   // Charger le JSON local
-  const fetchRecipes = async () => {
-    try {
-      const response = await fetch('../data/recipes.json');
-      if (!response.ok) throw new Error('Erreur lors du chargement du JSON');
-      const data: Recipe[] = await response.json();
-      setRecipes(data);
-    } catch (err) {
-      setError('Erreur lors de la récupération des recettes.');
-      console.error(err);
-    }
-  };
+const fetchRecipes = async () => {
+  try {
+    // On utilise directement le JSON importé
+    const data: Recipe[] = recipesData;
+    setRecipes(data);
+  } catch (err) {
+    setError((err as Error).message);
+    console.error('Erreur lors de la récupération des recettes');
+  }
+};
 
   useEffect(() => {
     fetchRecipes();
@@ -73,7 +73,7 @@ const RecipesList = () => {
         {filteredRecipes.map((recipe) => (
           <div key={recipe.id} className="card" onClick={() => navigate(`/recipes/${recipe.id}`)}>
            <img
-              src={recipe.imagePath ? `/foodie-share${recipe.imagePath}` : '/foodie-share/images/recipes/livre_recette.png'}
+              src={recipe.imagePath}
               alt={recipe.title}
               className="card__img"
             />

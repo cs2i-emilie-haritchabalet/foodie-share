@@ -7,7 +7,7 @@ import '../assets/css/recipe-details.css';
 import { FaHeart, FaAngleDoubleLeft, FaRegComment } from 'react-icons/fa';
 import { useRecipes} from '../context/RecipesContext';
 import type { Recipe } from '../context/RecipesContext';
-
+import recipesData from '../data/recipes.json';
 
 const RecipeDetail = () => {
   const { dispatch } = useRecipes();
@@ -39,14 +39,13 @@ const RecipeDetail = () => {
 
     // Récupération depuis le JSON statique
     useEffect(() => {
-        fetch('../data/recipes.json')
-            .then(res => res.json())
-            .then((data: Recipe[]) => {
-                const found = data.find(r => r.id === Number(id));
-                setRecipe(found ?? null);
-            })
-            .catch(() => setError('Erreur lors de la récupération de la recette.'));
-    }, [id]);
+    try {
+      const found = recipesData.find(r => r.id === Number(id));
+      setRecipe(found ?? null);
+    } catch {
+      setError('Erreur lors de la récupération de la recette.');
+    }
+  }, [id]);
 
     // Carousel des commentaires
     useEffect(() => {
@@ -78,7 +77,7 @@ const RecipeDetail = () => {
             </div>
 
             <img
-              src={recipe.imagePath ? `/foodie-share${recipe.imagePath}` : '/foodie-share/images/recipes/livre_recette.png'}
+              src={recipe.imagePath}
               alt={recipe.title}
             />
 

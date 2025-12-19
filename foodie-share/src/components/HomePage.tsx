@@ -43,9 +43,9 @@ const HomePage = () => {
       {error && <p className="error">{error}</p>}
       <div className='card-container'>
         {recipes.map((recipe) => (
-          <div key={recipe.id} className="card" onClick={() => navigate(`/recipes/${recipe.id}`)}>
+          <div key={recipe.id} className="card" onClick={() => navigate(`/images/recipes/${recipe.id}`)}>
             <img
-              src={recipe.imagePath ? `/foodie-share${recipe.imagePath}` : '/images/recipes/livre_recette.png'}
+              src={recipe.imagePath ? `${recipe.imagePath}` : '/images/recipes/livre_recette.png'}
               alt={recipe.title}
               className="card__img"
             />

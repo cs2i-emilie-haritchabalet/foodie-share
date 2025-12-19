@@ -39,7 +39,7 @@ const RecipeDetail = () => {
 
     // Récupération depuis le JSON statique
     useEffect(() => {
-        fetch('/data/recipes.json')
+        fetch('../data/recipes.json')
             .then(res => res.json())
             .then((data: Recipe[]) => {
                 const found = data.find(r => r.id === Number(id));

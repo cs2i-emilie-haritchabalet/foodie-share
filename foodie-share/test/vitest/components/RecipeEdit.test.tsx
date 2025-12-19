@@ -72,12 +72,12 @@ describe("RecipeDetail (page détail)", () => {
 
     await screen.findByText(recipesData[0].title);
 
-    fireEvent.input(screen.getByPlaceholderText("Votre nom"), { target: { value: "Alice" } });
-    fireEvent.input(screen.getByPlaceholderText("Votre commentaire"), { target: { value: "Top !" } });
+    fireEvent.input(screen.getByPlaceholderText("Votre nom"), { target: { value: "Aluce" } });
+    fireEvent.input(screen.getByPlaceholderText("Votre commentaire"), { target: { value: "zz Top !" } });
 
     fireEvent.submit(screen.getByRole("button", { name: /commenter/i }));
 
-    expect(await screen.findByText("Alice")).toBeInTheDocument();
-    expect(await screen.findByText("Délicieux !")).toBeInTheDocument();
+    expect(await screen.findByText("Aluce")).toBeInTheDocument();
+    expect(await screen.findByText("zz Top !")).toBeInTheDocument();
   });
 });
